@@ -1,0 +1,1527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Legend of Georg — A Portfolio Adventure</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; background: #000; color: #fff; font-family: 'Courier New', monospace; }
+  body { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  canvas {
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+    background: #000;
+    box-shadow: 0 0 0 4px #2a2a2a, 0 0 120px rgba(255,200,100,0.22);
+    width: min(96vw, calc(92vh * 4 / 3));
+    height: auto;
+    aspect-ratio: 4 / 3;
+  }
+  @media (pointer: coarse), (max-width: 820px) {
+    canvas { width: min(96vw, calc(56vh * 4 / 3)); }
+  }
+  .hint {
+    position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%);
+    font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: rgba(255,255,255,0.4); pointer-events: none; text-align: center;
+  }
+  .hint b { color: #FFD36E; }
+  .brand {
+    position: fixed; top: 14px; left: 18px;
+    font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase;
+    color: rgba(255,255,255,0.32);
+    z-index: 20;
+  }
+  .brand a { color: #6AE3FF; text-decoration: none; }
+
+  .touch {
+    position: fixed; left: 0; right: 0; bottom: 0;
+    padding: 14px 16px max(14px, env(safe-area-inset-bottom));
+    display: none; justify-content: space-between; align-items: flex-end;
+    pointer-events: none; z-index: 10;
+  }
+  .touch > * { pointer-events: auto; }
+  .dpad { position: relative; width: 150px; height: 150px; touch-action: none; }
+  .dpad button {
+    position: absolute; width: 50px; height: 50px;
+    background: rgba(22,22,40,0.78); border: 2px solid rgba(255,255,255,0.35);
+    border-radius: 10px; color: #fff; font-size: 22px; font-weight: bold;
+    font-family: inherit; touch-action: none;
+    -webkit-tap-highlight-color: transparent; user-select: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.08s, transform 0.08s;
+  }
+  .dpad button:active, .dpad button.active {
+    background: rgba(106,227,255,0.35); transform: scale(0.94);
+  }
+  .dpad .up    { top: 0;    left: 50px; }
+  .dpad .down  { bottom: 0; left: 50px; }
+  .dpad .left  { top: 50px; left: 0; }
+  .dpad .right { top: 50px; right: 0; }
+  .btn-a {
+    width: 86px; height: 86px; border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #ff8080, #b7482c);
+    border: 3px solid #fff; color: #fff; font-size: 30px; font-weight: 900;
+    font-family: inherit; touch-action: none;
+    -webkit-tap-highlight-color: transparent; user-select: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+  }
+  .btn-a:active { transform: scale(0.94); }
+  @media (pointer: coarse), (max-width: 820px) {
+    .touch { display: flex; }
+    .hint { bottom: 180px; }
+  }
+
+  #loading {
+    position: fixed; inset: 0; background: #000;
+    display: flex; align-items: center; justify-content: center;
+    color: #FFD36E; font-size: 14px; letter-spacing: 0.3em;
+    z-index: 100;
+  }
+</style>
+</head>
+<body>
+<div id="loading">LOADING HYRULE…</div>
+<div class="brand">A PORTFOLIO BY <a href="https://georg.miami">GEORG.MIAMI</a></div>
+<canvas id="game" width="320" height="240"></canvas>
+<div class="hint">WASD / ARROWS · <b>SPACE</b> ACTION · <b>ENTER</b> START</div>
+<div class="touch" id="touch">
+  <div class="dpad" id="dpad">
+    <button class="up" data-dir="up">▲</button>
+    <button class="left" data-dir="left">◄</button>
+    <button class="right" data-dir="right">►</button>
+    <button class="down" data-dir="down">▼</button>
+  </div>
+  <button class="btn-a" id="btnA">A</button>
+</div>
+
+<script>
+(() => {
+  // ═══════════════════════════════════════════════════════════════════════════
+  // THE LEGEND OF GEORG — A Portfolio Adventure
+  // Built on authentic Zelda: A Link to the Past sprites.
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  const canvas = document.getElementById('game');
+  const ctx = canvas.getContext('2d');
+  ctx.imageSmoothingEnabled = false;
+  const GW = canvas.width;   // 320
+  const GH = canvas.height;  // 240
+
+  // ───────── Assets ─────────
+  const ASSETS = {
+    map:      'Overworld - Light World.png',
+    interior: 'House Interiors - House of Storytelling Tree _ Sahasralah.png',
+  };
+  const IMG = {};
+
+  function loadImage(src) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+      img.src = src;
+    });
+  }
+
+  // Preprocess: replace magenta (#FF00FF) with transparent alpha
+  function makeTransparent(img, targets) {
+    const c = document.createElement('canvas');
+    c.width = img.width; c.height = img.height;
+    const g = c.getContext('2d');
+    g.drawImage(img, 0, 0);
+    const data = g.getImageData(0, 0, c.width, c.height);
+    const px = data.data;
+    for (let i = 0; i < px.length; i += 4) {
+      for (const t of targets) {
+        if (Math.abs(px[i] - t[0]) < 8 &&
+            Math.abs(px[i+1] - t[1]) < 8 &&
+            Math.abs(px[i+2] - t[2]) < 8) {
+          px[i+3] = 0;
+          break;
+        }
+      }
+    }
+    g.putImageData(data, 0, 0);
+    return c;
+  }
+
+  // ───────── PROJECTS ─────────
+  const PROJECTS = {
+    vestia:   { name: 'Vestia',        tag: 'AI PROPERTY MGMT',   desc: ['AI property management for','South Florida condos.','Six modules live.'], url: 'https://vestia.georg.miami' },
+    caliber:  { name: 'Caliber',       tag: 'YOUTH SCOUTING',     desc: ['AI-verified youth sports scouting.','Upload phone footage,','get real stats.'], url: 'https://caliber.georg.miami' },
+    penny:    { name: 'Ask Penny',     tag: 'FINANCE AI',          desc: ['Claude-powered finance assistant.','Connect your bank,','get real insights.'], url: 'https://askpenny.georg.miami' },
+    callflow: { name: 'CallFlow AI',   tag: 'VOICE AGENT',         desc: ['Live AI voice agent for','real-estate seller intake.','Florida-specific.'], url: 'https://callflow.georg.miami' },
+    onboard:  { name: 'Onboard',       tag: 'DOC → COURSE',        desc: ['Upload internal docs,','get a structured course','in three minutes.'], url: 'https://onboard.georg.miami' },
+    factory:  { name: 'Agent Factory', tag: 'AUTONOMOUS BUILD',    desc: ['Four autonomous AI agents','collaborate to build sites','from a single brief.'], url: 'https://factory.georg.miami' },
+    piscine:  { name: 'La Piscine',    tag: 'RESTAURANT CONCEPT',  desc: ['Miami restaurant concept —','explosive landing-page','experiments.'], url: 'https://la-piscine.georg.miami' },
+  };
+  const AUDITS = [
+    { name: 'Buildrite',        tag: 'CONSTRUCTION',    url: 'https://buildrite.georg.miami',      desc: 'Growth audit + branded site for a construction firm.' },
+    { name: 'Dumbo Health',     tag: 'SLEEP APNEA',     url: 'https://dumbo-health.georg.miami',   desc: 'Sleep-apnea telehealth audit for Nicolas Nemeth.' },
+    { name: 'Dram Finance',     tag: 'WHISKY INVESTING',url: 'https://dram-finance.georg.miami',   desc: 'Fractional whisky investing audit for Mario Tricarico.' },
+    { name: 'Publisher Intel',  tag: 'FINPUB',          url: 'https://ian.georg.miami',            desc: 'Financial-publishing audit + Ian King prototype.' },
+    { name: 'DC Command',       tag: 'RBC DATACENTER',  url: 'https://rbc-datacenter.georg.miami', desc: 'RBC data-center command-center POC for Sami Fleyhan.' },
+  ];
+
+  // ───────── Map: interactive nodes on the Light World ─────────
+  // Coordinates are pixel positions on the 4110×5136 Light World PNG.
+  // Landmarks:  Kakariko village ~ (300-1100, 2300-3200), Hyrule Castle center ~ (2100, 2500),
+  //             Lake Hylia ~ (2000, 4400), open grass south of castle ~ (2100, 3300).
+  const NODES = [
+    // Village of Builders — Kakariko houses (6 flagship products)
+    { kind: 'project', key: 'vestia',   x: 2260, y: 2290 },
+    { kind: 'project', key: 'caliber',  x: 2350, y: 2290 },
+    { kind: 'project', key: 'penny',    x: 2440, y: 2290 },
+    { kind: 'project', key: 'callflow', x: 2260, y: 2360 },
+    { kind: 'project', key: 'onboard',  x: 2350, y: 2360 },
+    { kind: 'project', key: 'factory',  x: 2440, y: 2360 },
+
+    // Audit Castle — Hyrule Castle gate (south entrance)
+    { kind: 'castle', x: 2100, y: 2820 },
+
+    // La Piscine — Lake Hylia shore
+    { kind: 'project', key: 'piscine',  x: 2400, y: 4280 },
+
+    // World NPC / sign — open field east of Kakariko village (spawn area)
+    { kind: 'wizard', x: 2550, y: 2220 },
+    { kind: 'sign',   x: 2500, y: 2220, lines: [
+      'WELCOME — KAKARIKO',
+      'SIX HOUSES — ONE PER BUILD',
+      'South: Castle of Audits',
+      'Far South: Lake La Piscine',
+      'Press A near any glow.',
+    ]},
+
+    // Directional signs along paths
+    { kind: 'sign', x: 2620, y: 2560, lines: [
+      '↓  TO THE CASTLE  ↓',
+      'FIVE CLIENT AUDITS',
+      'Walk south through the field.',
+    ]},
+    { kind: 'sign', x: 2620, y: 3300, lines: [
+      '↓  LAKE HYLIA  ↓',
+      'LA PISCINE restaurant concept',
+      'Keep walking south.',
+    ]},
+    { kind: 'sign', x: 2200, y: 2240, lines: [
+      '← THE VILLAGE',
+      'Six product houses.',
+      'Glowing Triforces mark doors.',
+    ]},
+  ];
+
+  // World labels — always visible floating text (guides new players).
+  // Kept distinct from node banners to avoid label collisions.
+  const LABELS = [
+    { x: 2350, y: 2180, text: '← VILLAGE OF BUILDERS',   color: '#ffd850' },
+    { x: 2620, y: 2180, text: 'YOU ARE HERE',            color: '#98ff98' },
+    { x: 2620, y: 2450, text: '↓ TO THE CASTLE',         color: '#ff90b0' },
+    { x: 2620, y: 3450, text: '↓ TO LAKE LA PISCINE',    color: '#98d8ff' },
+    { x: 2700, y: 3900, text: 'LAKE HYLIA',              color: '#98d8ff' },
+  ];
+
+  // Hero
+  const hero = {
+    x: 2620, y: 2220,
+    dir: 2, // face west toward village
+    frame: 0, ftime: 0,
+    moving: false,
+  };
+
+  const MAP_W = 4110, MAP_H = 5136;
+
+  // ───────── Tile-level walkability grid ─────────
+  // Pre-computed at load: samples multiple pixels per 8px tile and stores
+  // "walkable" as a majority vote. Avoids tile-border false-blocks.
+  const TILE = 8;
+  const GRID_W = Math.ceil(MAP_W / TILE);
+  const GRID_H = Math.ceil(MAP_H / TILE);
+  let walkGrid = null; // Uint8Array of 0/1
+
+  function isWalkablePixel(r, g, b) {
+    // Water (bright blue) — blocked
+    if (b > 130 && b > r + 30 && b > g - 20) return false;
+    // Stone / walls / buildings (low-sat mid brights) — blocked
+    const max = Math.max(r, g, b), min = Math.min(r, g, b);
+    const sat = max === 0 ? 0 : (max - min) / max;
+    if (sat < 0.14 && max > 110 && max < 230) return false;
+    // Hard shadow / tree-base (deep darks) — blocked
+    if (r < 50 && g < 70 && b < 50) return false;
+    return true;
+  }
+
+  // Build the grid once after map is loaded (samples 4 points per tile)
+  function buildWalkGrid(pxData) {
+    const grid = new Uint8Array(GRID_W * GRID_H);
+    const offsets = [[2, 2], [6, 2], [2, 6], [6, 6], [4, 4]]; // 5 sample pts per 8×8
+    for (let gy = 0; gy < GRID_H; gy++) {
+      for (let gx = 0; gx < GRID_W; gx++) {
+        let ok = 0, tot = 0;
+        const baseX = gx * TILE, baseY = gy * TILE;
+        for (const [dx, dy] of offsets) {
+          const x = baseX + dx, y = baseY + dy;
+          if (x >= MAP_W || y >= MAP_H) continue;
+          const i = (y * MAP_W + x) * 4;
+          if (isWalkablePixel(pxData[i], pxData[i+1], pxData[i+2])) ok++;
+          tot++;
+        }
+        // Majority rule: 3+/5 walkable points → tile is walkable
+        grid[gy * GRID_W + gx] = ok * 2 > tot ? 1 : 0;
+      }
+    }
+    // One pass of smoothing: an isolated blocker surrounded by walkables becomes walkable
+    // (fixes tile borders and shadow artifacts between walkable tiles)
+    const smoothed = new Uint8Array(grid);
+    for (let gy = 1; gy < GRID_H - 1; gy++) {
+      for (let gx = 1; gx < GRID_W - 1; gx++) {
+        if (grid[gy * GRID_W + gx]) continue;
+        let n = 0;
+        for (let ddy = -1; ddy <= 1; ddy++)
+          for (let ddx = -1; ddx <= 1; ddx++)
+            if ((ddx || ddy) && grid[(gy + ddy) * GRID_W + (gx + ddx)]) n++;
+        if (n >= 7) smoothed[gy * GRID_W + gx] = 1;
+      }
+    }
+    return smoothed;
+  }
+
+  function walkableAt(x, y) {
+    if (x < 4 || y < 4 || x > MAP_W - 4 || y > MAP_H - 4) return false;
+    const gx = (x / TILE) | 0, gy = (y / TILE) | 0;
+    return walkGrid[gy * GRID_W + gx] === 1;
+  }
+
+  // Hero footprint collision — single feet point, forgiving
+  function canMoveTo(px, py) {
+    const feetY = py + 8;
+    if (!walkableAt(px, feetY)) return false;
+    for (const n of NODES) {
+      if (n.kind === 'wizard' || n.kind === 'sign') {
+        const dx = px - n.x, dy = py - n.y;
+        if (Math.abs(dx) < 8 && Math.abs(dy) < 10) return false;
+      }
+    }
+    return true;
+  }
+
+  // ───────── Procedural Link sprite (draw once into an offscreen atlas) ─────────
+  // Authentic ALTTP palette. 16×20 frames, 4 directions × 3 frames.
+  const LINK_W = 16, LINK_H = 20;
+  const linkAtlas = document.createElement('canvas');
+  linkAtlas.width = LINK_W * 3;
+  linkAtlas.height = LINK_H * 4;
+  {
+    const g = linkAtlas.getContext('2d');
+    g.imageSmoothingEnabled = false;
+
+    const P = {
+      skin: '#f8c890', skinD: '#c07040',
+      hair: '#f8c048', hairD: '#b07020',
+      hat:  '#30a038', hatD:  '#187020', hatL: '#58d058',
+      tunic:'#38a840', tunicD:'#1c6820', tunicL:'#68d868',
+      belt: '#402010', boot: '#502418',
+      shield:'#c8c8d8', shieldR:'#c83018', shieldB:'#2030b0',
+      outline: '#181818',
+    };
+
+    function pxRect(g, x, y, w, h, c) { g.fillStyle = c; g.fillRect(x, y, w, h); }
+
+    // DOWN frames: idle, step-L, step-R
+    function drawDown(g, ox, oy, step) {
+      // head/hat (y=0..7)
+      pxRect(g, ox+4, oy+0, 8, 1, P.outline);
+      pxRect(g, ox+3, oy+1, 10, 1, P.hat);
+      pxRect(g, ox+3, oy+2, 1, 1, P.outline);
+      pxRect(g, ox+4, oy+2, 8, 1, P.hat);
+      pxRect(g, ox+12,oy+2, 1, 1, P.outline);
+      pxRect(g, ox+3, oy+3, 1, 1, P.outline);
+      pxRect(g, ox+4, oy+3, 8, 1, P.hatL);
+      pxRect(g, ox+12,oy+3, 1, 1, P.outline);
+      // face
+      pxRect(g, ox+3, oy+4, 1, 1, P.outline);
+      pxRect(g, ox+4, oy+4, 1, 1, P.hair);
+      pxRect(g, ox+5, oy+4, 6, 1, P.skin);
+      pxRect(g, ox+11,oy+4, 1, 1, P.hair);
+      pxRect(g, ox+12,oy+4, 1, 1, P.outline);
+      pxRect(g, ox+3, oy+5, 1, 1, P.outline);
+      pxRect(g, ox+4, oy+5, 1, 1, P.hair);
+      pxRect(g, ox+5, oy+5, 1, 1, P.skin);
+      pxRect(g, ox+6, oy+5, 1, 1, P.outline); // eye
+      pxRect(g, ox+7, oy+5, 2, 1, P.skin);
+      pxRect(g, ox+9, oy+5, 1, 1, P.outline); // eye
+      pxRect(g, ox+10,oy+5, 1, 1, P.skin);
+      pxRect(g, ox+11,oy+5, 1, 1, P.hair);
+      pxRect(g, ox+12,oy+5, 1, 1, P.outline);
+      pxRect(g, ox+4, oy+6, 1, 1, P.outline);
+      pxRect(g, ox+5, oy+6, 6, 1, P.skin);
+      pxRect(g, ox+11,oy+6, 1, 1, P.outline);
+      pxRect(g, ox+5, oy+7, 1, 1, P.outline);
+      pxRect(g, ox+6, oy+7, 4, 1, P.skinD);
+      pxRect(g, ox+10,oy+7, 1, 1, P.outline);
+
+      // neck/tunic top (y=8..13)
+      pxRect(g, ox+4, oy+8, 1, 1, P.outline);
+      pxRect(g, ox+5, oy+8, 6, 1, P.tunic);
+      pxRect(g, ox+11,oy+8, 1, 1, P.outline);
+      pxRect(g, ox+4, oy+9, 1, 1, P.outline);
+      pxRect(g, ox+5, oy+9, 1, 1, P.tunicL);
+      pxRect(g, ox+6, oy+9, 4, 1, P.tunic);
+      pxRect(g, ox+10,oy+9, 1, 1, P.tunicD);
+      pxRect(g, ox+11,oy+9, 1, 1, P.outline);
+      // arms (shield on left-side when facing down = our right)
+      pxRect(g, ox+3, oy+10,1, 1, P.outline);
+      pxRect(g, ox+4, oy+10,1, 1, P.skin);
+      pxRect(g, ox+5, oy+10,6, 1, P.tunic);
+      pxRect(g, ox+11,oy+10,1, 1, P.shield);
+      pxRect(g, ox+12,oy+10,1, 1, P.outline);
+      pxRect(g, ox+3, oy+11,1, 1, P.outline);
+      pxRect(g, ox+4, oy+11,1, 1, P.skinD);
+      pxRect(g, ox+5, oy+11,6, 1, P.tunicD);
+      pxRect(g, ox+11,oy+11,1, 1, P.shieldR);
+      pxRect(g, ox+12,oy+11,1, 1, P.outline);
+      pxRect(g, ox+4, oy+12,1, 1, P.outline);
+      pxRect(g, ox+5, oy+12,6, 1, P.tunic);
+      pxRect(g, ox+11,oy+12,1, 1, P.shield);
+      pxRect(g, ox+12,oy+12,1, 1, P.outline);
+      pxRect(g, ox+4, oy+13,1, 1, P.outline);
+      pxRect(g, ox+5, oy+13,6, 1, P.belt);
+      pxRect(g, ox+11,oy+13,1, 1, P.outline);
+
+      // legs (y=14..19) — animate
+      const offL = step === 1 ? 1 : 0;
+      const offR = step === 2 ? 1 : 0;
+      pxRect(g, ox+5, oy+14, 1, 1, P.outline);
+      pxRect(g, ox+6, oy+14, 2, 1, P.tunic);
+      pxRect(g, ox+8, oy+14, 1, 1, P.outline);
+      pxRect(g, ox+9, oy+14, 2, 1, P.tunic);
+      pxRect(g, ox+11,oy+14, 1, 1, P.outline);
+      pxRect(g, ox+5, oy+15, 1, 1, P.outline);
+      pxRect(g, ox+6, oy+15, 2, 1, P.skin);
+      pxRect(g, ox+8, oy+15, 1, 1, P.outline);
+      pxRect(g, ox+9, oy+15, 2, 1, P.skin);
+      pxRect(g, ox+11,oy+15, 1, 1, P.outline);
+      // boots
+      pxRect(g, ox+5, oy+16+offL, 1, 1, P.outline);
+      pxRect(g, ox+6, oy+16+offL, 2, 1, P.boot);
+      pxRect(g, ox+8, oy+16+offL, 1, 1, P.outline);
+      pxRect(g, ox+9, oy+16+offR, 2, 1, P.boot);
+      pxRect(g, ox+11,oy+16+offR, 1, 1, P.outline);
+      pxRect(g, ox+5, oy+17+offL, 1, 1, P.outline);
+      pxRect(g, ox+6, oy+17+offL, 2, 1, P.outline);
+      pxRect(g, ox+8, oy+17+offL, 1, 1, P.outline);
+      pxRect(g, ox+9, oy+17+offR, 2, 1, P.outline);
+      pxRect(g, ox+11,oy+17+offR, 1, 1, P.outline);
+
+      // shadow
+      g.fillStyle = 'rgba(0,0,0,0.25)';
+      g.fillRect(ox+4, oy+18, 8, 1);
+    }
+
+    // UP frames — back of hat/tunic, no face
+    function drawUp(g, ox, oy, step) {
+      pxRect(g, ox+4, oy+0, 8, 1, P.outline);
+      pxRect(g, ox+3, oy+1, 1, 1, P.outline);
+      pxRect(g, ox+4, oy+1, 8, 1, P.hatL);
+      pxRect(g, ox+12,oy+1, 1, 1, P.outline);
+      pxRect(g, ox+3, oy+2, 1, 1, P.outline);
+      pxRect(g, ox+4, oy+2, 8, 1, P.hat);
+      pxRect(g, ox+12,oy+2, 1, 1, P.outline);
+      pxRect(g, ox+3, oy+3, 1, 1, P.outline);
+      pxRect(g, ox+4, oy+3, 8, 1, P.hatD);
+      pxRect(g, ox+12,oy+3, 1, 1, P.outline);
+      pxRect(g, ox+3, oy+4, 1, 1, P.outline);
+      pxRect(g, ox+4, oy+4, 1, 1, P.hair);
+      pxRect(g, ox+5, oy+4, 6, 1, P.hairD);
+      pxRect(g, ox+11,oy+4, 1, 1, P.hair);
+      pxRect(g, ox+12,oy+4, 1, 1, P.outline);
+      pxRect(g, ox+3, oy+5, 1, 1, P.outline);
+      pxRect(g, ox+4, oy+5, 8, 1, P.hair);
+      pxRect(g, ox+12,oy+5, 1, 1, P.outline);
+      pxRect(g, ox+4, oy+6, 1, 1, P.outline);
+      pxRect(g, ox+5, oy+6, 6, 1, P.hairD);
+      pxRect(g, ox+11,oy+6, 1, 1, P.outline);
+      pxRect(g, ox+5, oy+7, 1, 1, P.outline);
+      pxRect(g, ox+6, oy+7, 4, 1, P.hair);
+      pxRect(g, ox+10,oy+7, 1, 1, P.outline);
+      // tunic back
+      pxRect(g, ox+4, oy+8, 1, 1, P.outline);
+      pxRect(g, ox+5, oy+8, 6, 1, P.tunic);
+      pxRect(g, ox+11,oy+8, 1, 1, P.outline);
+      pxRect(g, ox+3, oy+9, 1, 1, P.outline);
+      pxRect(g, ox+4, oy+9, 1, 1, P.shield);
+      pxRect(g, ox+5, oy+9, 6, 1, P.tunicL);
+      pxRect(g, ox+11,oy+9, 1, 1, P.skin);
+      pxRect(g, ox+12,oy+9, 1, 1, P.outline);
+      pxRect(g, ox+3, oy+10,1, 1, P.outline);
+      pxRect(g, ox+4, oy+10,1, 1, P.shieldB);
+      pxRect(g, ox+5, oy+10,6, 1, P.tunic);
+      pxRect(g, ox+11,oy+10,1, 1, P.skinD);
+      pxRect(g, ox+12,oy+10,1, 1, P.outline);
+      pxRect(g, ox+3, oy+11,1, 1, P.outline);
+      pxRect(g, ox+4, oy+11,1, 1, P.shield);
+      pxRect(g, ox+5, oy+11,6, 1, P.tunicD);
+      pxRect(g, ox+11,oy+11,1, 1, P.outline);
+      pxRect(g, ox+4, oy+12,1, 1, P.outline);
+      pxRect(g, ox+5, oy+12,6, 1, P.tunic);
+      pxRect(g, ox+11,oy+12,1, 1, P.outline);
+      pxRect(g, ox+4, oy+13,1, 1, P.outline);
+      pxRect(g, ox+5, oy+13,6, 1, P.belt);
+      pxRect(g, ox+11,oy+13,1, 1, P.outline);
+      // legs
+      const offL = step === 1 ? 1 : 0;
+      const offR = step === 2 ? 1 : 0;
+      pxRect(g, ox+5, oy+14, 1, 1, P.outline);
+      pxRect(g, ox+6, oy+14, 2, 1, P.tunic);
+      pxRect(g, ox+8, oy+14, 1, 1, P.outline);
+      pxRect(g, ox+9, oy+14, 2, 1, P.tunic);
+      pxRect(g, ox+11,oy+14, 1, 1, P.outline);
+      pxRect(g, ox+5, oy+15, 1, 1, P.outline);
+      pxRect(g, ox+6, oy+15, 2, 1, P.skin);
+      pxRect(g, ox+8, oy+15, 1, 1, P.outline);
+      pxRect(g, ox+9, oy+15, 2, 1, P.skin);
+      pxRect(g, ox+11,oy+15, 1, 1, P.outline);
+      pxRect(g, ox+5, oy+16+offL, 1, 1, P.outline);
+      pxRect(g, ox+6, oy+16+offL, 2, 1, P.boot);
+      pxRect(g, ox+8, oy+16+offL, 1, 1, P.outline);
+      pxRect(g, ox+9, oy+16+offR, 2, 1, P.boot);
+      pxRect(g, ox+11,oy+16+offR, 1, 1, P.outline);
+      pxRect(g, ox+5, oy+17+offL, 1, 1, P.outline);
+      pxRect(g, ox+6, oy+17+offL, 2, 1, P.outline);
+      pxRect(g, ox+8, oy+17+offL, 1, 1, P.outline);
+      pxRect(g, ox+9, oy+17+offR, 2, 1, P.outline);
+      pxRect(g, ox+11,oy+17+offR, 1, 1, P.outline);
+      g.fillStyle = 'rgba(0,0,0,0.25)'; g.fillRect(ox+4, oy+18, 8, 1);
+    }
+
+    // SIDE (left-facing). Right-facing is horizontally flipped at draw time.
+    function drawSide(g, ox, oy, step) {
+      // hat pointing left
+      pxRect(g, ox+5, oy+0, 1, 1, P.outline);
+      pxRect(g, ox+6, oy+1, 5, 1, P.hat);
+      pxRect(g, ox+11,oy+1, 1, 1, P.outline);
+      pxRect(g, ox+4, oy+2, 1, 1, P.outline);
+      pxRect(g, ox+5, oy+2, 7, 1, P.hat);
+      pxRect(g, ox+12,oy+2, 1, 1, P.outline);
+      pxRect(g, ox+3, oy+3, 1, 1, P.outline);
+      pxRect(g, ox+4, oy+3, 8, 1, P.hatL);
+      pxRect(g, ox+12,oy+3, 1, 1, P.outline);
+      // face (side)
+      pxRect(g, ox+3, oy+4, 1, 1, P.outline);
+      pxRect(g, ox+4, oy+4, 1, 1, P.hair);
+      pxRect(g, ox+5, oy+4, 5, 1, P.skin);
+      pxRect(g, ox+10,oy+4, 1, 1, P.hair);
+      pxRect(g, ox+11,oy+4, 1, 1, P.outline);
+      pxRect(g, ox+3, oy+5, 1, 1, P.outline);
+      pxRect(g, ox+4, oy+5, 1, 1, P.skin);
+      pxRect(g, ox+5, oy+5, 1, 1, P.outline); // eye
+      pxRect(g, ox+6, oy+5, 3, 1, P.skin);
+      pxRect(g, ox+9, oy+5, 1, 1, P.hair);
+      pxRect(g, ox+10,oy+5, 1, 1, P.outline);
+      pxRect(g, ox+3, oy+6, 1, 1, P.outline);
+      pxRect(g, ox+4, oy+6, 1, 1, P.skin);
+      pxRect(g, ox+5, oy+6, 5, 1, P.skin);
+      pxRect(g, ox+10,oy+6, 1, 1, P.outline);
+      pxRect(g, ox+4, oy+7, 1, 1, P.outline);
+      pxRect(g, ox+5, oy+7, 5, 1, P.skinD);
+      pxRect(g, ox+10,oy+7, 1, 1, P.outline);
+      // tunic
+      pxRect(g, ox+4, oy+8, 1, 1, P.outline);
+      pxRect(g, ox+5, oy+8, 5, 1, P.tunic);
+      pxRect(g, ox+10,oy+8, 1, 1, P.outline);
+      // arm forward + shield on back
+      pxRect(g, ox+3, oy+9, 1, 1, P.outline);
+      pxRect(g, ox+4, oy+9, 1, 1, P.skin);
+      pxRect(g, ox+5, oy+9, 5, 1, P.tunicL);
+      pxRect(g, ox+10,oy+9, 1, 1, P.shield);
+      pxRect(g, ox+11,oy+9, 1, 1, P.outline);
+      pxRect(g, ox+3, oy+10,1, 1, P.outline);
+      pxRect(g, ox+4, oy+10,1, 1, P.skinD);
+      pxRect(g, ox+5, oy+10,5, 1, P.tunic);
+      pxRect(g, ox+10,oy+10,1, 1, P.shieldB);
+      pxRect(g, ox+11,oy+10,1, 1, P.outline);
+      pxRect(g, ox+4, oy+11,1, 1, P.outline);
+      pxRect(g, ox+5, oy+11,5, 1, P.tunicD);
+      pxRect(g, ox+10,oy+11,1, 1, P.outline);
+      pxRect(g, ox+4, oy+12,1, 1, P.outline);
+      pxRect(g, ox+5, oy+12,5, 1, P.tunic);
+      pxRect(g, ox+10,oy+12,1, 1, P.outline);
+      pxRect(g, ox+4, oy+13,1, 1, P.outline);
+      pxRect(g, ox+5, oy+13,5, 1, P.belt);
+      pxRect(g, ox+10,oy+13,1, 1, P.outline);
+      // legs (single column offset by step)
+      const stepOff = step === 0 ? 0 : (step === 1 ? -1 : 1);
+      pxRect(g, ox+4, oy+14,1, 1, P.outline);
+      pxRect(g, ox+5, oy+14,5, 1, P.tunic);
+      pxRect(g, ox+10,oy+14,1, 1, P.outline);
+      pxRect(g, ox+5, oy+15,1, 1, P.outline);
+      pxRect(g, ox+6, oy+15,3, 1, P.skin);
+      pxRect(g, ox+9, oy+15,1, 1, P.outline);
+      pxRect(g, ox+5+stepOff, oy+16,1, 1, P.outline);
+      pxRect(g, ox+6+stepOff, oy+16,3, 1, P.boot);
+      pxRect(g, ox+9+stepOff, oy+16,1, 1, P.outline);
+      pxRect(g, ox+5+stepOff, oy+17,1, 1, P.outline);
+      pxRect(g, ox+6+stepOff, oy+17,3, 1, P.outline);
+      pxRect(g, ox+9+stepOff, oy+17,1, 1, P.outline);
+      g.fillStyle = 'rgba(0,0,0,0.25)'; g.fillRect(ox+4, oy+18, 7, 1);
+    }
+
+    // DOWN row (y=0)
+    for (let f = 0; f < 3; f++) drawDown(g, f * LINK_W, 0, f);
+    // UP row (y=LINK_H)
+    for (let f = 0; f < 3; f++) drawUp(g, f * LINK_W, LINK_H, f);
+    // LEFT row (y=2*LINK_H)
+    for (let f = 0; f < 3; f++) drawSide(g, f * LINK_W, 2 * LINK_H, f);
+    // RIGHT row (y=3*LINK_H) — copy left, flip horizontally
+    for (let f = 0; f < 3; f++) {
+      g.save();
+      g.translate((f + 1) * LINK_W, 3 * LINK_H);
+      g.scale(-1, 1);
+      drawSide(g, 0, 0, f);
+      g.restore();
+    }
+  }
+
+  function drawLink(targetCtx, sx, sy) {
+    const row = hero.dir;
+    const col = hero.moving ? (hero.frame % 2 === 0 ? 1 : 2) : 0;
+    // Scale up 1.4× so Link reads at normal viewing distance
+    const SC = 1.4;
+    const W = Math.round(LINK_W * SC), H = Math.round(LINK_H * SC);
+    const dx = Math.round(sx - W / 2), dy = Math.round(sy - H + 5);
+    targetCtx.drawImage(
+      linkAtlas,
+      col * LINK_W, row * LINK_H, LINK_W, LINK_H,
+      dx, dy, W, H
+    );
+
+    // Sword overlay — only in side/up directions when moving
+    if (hero.moving && (row === 1 || row === 2 || row === 3)) {
+      targetCtx.save();
+      const swingX = row === 2 ? dx - 3 : row === 3 ? dx + W - 2 : dx + W / 2 - 1;
+      const swingY = dy + Math.round(H * 0.45);
+      // blade
+      targetCtx.fillStyle = '#d8e4ff';
+      if (row === 2) { targetCtx.fillRect(swingX - 6, swingY, 6, 2); targetCtx.fillRect(swingX - 5, swingY + 2, 4, 1); }
+      else if (row === 3) { targetCtx.fillRect(swingX, swingY, 6, 2); targetCtx.fillRect(swingX + 1, swingY + 2, 4, 1); }
+      // hilt
+      targetCtx.fillStyle = '#ffd850';
+      if (row === 2) targetCtx.fillRect(swingX - 1, swingY - 1, 2, 4);
+      else if (row === 3) targetCtx.fillRect(swingX - 1, swingY - 1, 2, 4);
+      targetCtx.restore();
+    }
+
+    // Feather on the hat — always visible, blows with direction
+    targetCtx.save();
+    targetCtx.fillStyle = '#e8fff0';
+    if (row === 0) { // facing down — feather trails up-back
+      targetCtx.fillRect(dx + Math.round(W * 0.68), dy + 2, 3, 1);
+      targetCtx.fillRect(dx + Math.round(W * 0.72), dy + 1, 2, 1);
+    } else if (row === 1) { // facing up — feather points up-fwd
+      targetCtx.fillRect(dx + Math.round(W * 0.25), dy, 3, 1);
+      targetCtx.fillRect(dx + Math.round(W * 0.22), dy + 1, 2, 1);
+    } else if (row === 2) { // facing left
+      targetCtx.fillRect(dx - 1, dy + 3, 4, 1);
+      targetCtx.fillRect(dx, dy + 4, 3, 1);
+    } else if (row === 3) { // facing right
+      targetCtx.fillRect(dx + W - 3, dy + 3, 4, 1);
+      targetCtx.fillRect(dx + W - 2, dy + 4, 3, 1);
+    }
+    targetCtx.restore();
+  }
+
+  // ───────── Wizard NPC sprite (offscreen atlas) ─────────
+  const WIZ_W = 16, WIZ_H = 24;
+  const wizardSprite = document.createElement('canvas');
+  wizardSprite.width = WIZ_W; wizardSprite.height = WIZ_H;
+  {
+    const g = wizardSprite.getContext('2d');
+    const P = { robeD:'#3a1a60', robeM:'#5a2898', robeL:'#8a4cd0', hatD:'#2a1450', hatL:'#6a38b8',
+                beard:'#f0f0f0', face:'#f8c890', faceD:'#c07040', out:'#181018' };
+    const px = (x,y,w,h,c) => { g.fillStyle=c; g.fillRect(x,y,w,h); };
+    // pointy wizard hat
+    px(7, 0, 2, 1, P.out);
+    px(6, 1, 4, 1, P.hatD);
+    px(5, 2, 6, 1, P.hatL);
+    px(4, 3, 8, 1, P.hatD);
+    px(3, 4, 10,1, P.hatL);
+    px(3, 5, 1, 1, P.out); px(4, 5, 8, 1, P.hatD); px(12,5,1,1,P.out);
+    // face
+    px(4, 6, 1, 1, P.out);
+    px(5, 6, 6, 1, P.face);
+    px(11,6, 1, 1, P.out);
+    px(4, 7, 1, 1, P.out);
+    px(5, 7, 6, 1, P.face);
+    px(11,7, 1, 1, P.out);
+    px(4, 8, 1, 1, P.out);
+    px(5, 8, 1, 1, P.face);
+    px(6, 8, 1, 1, P.out); // eye
+    px(7, 8, 2, 1, P.face);
+    px(9, 8, 1, 1, P.out); // eye
+    px(10,8, 1, 1, P.face);
+    px(11,8, 1, 1, P.out);
+    // beard
+    px(4, 9, 1, 1, P.out);
+    px(5, 9, 6, 1, P.beard);
+    px(11,9, 1, 1, P.out);
+    px(4,10, 1, 1, P.out);
+    px(5,10, 6, 1, P.beard);
+    px(11,10,1, 1, P.out);
+    px(5,11, 1, 1, P.out);
+    px(6,11, 4, 1, P.beard);
+    px(10,11,1, 1, P.out);
+    // robe
+    px(3,12, 1, 1, P.out);
+    px(4,12, 8, 1, P.robeL);
+    px(12,12,1, 1, P.out);
+    px(2,13, 1, 1, P.out);
+    px(3,13,10, 1, P.robeM);
+    px(13,13,1, 1, P.out);
+    px(2,14, 1, 1, P.out);
+    px(3,14,10, 1, P.robeD);
+    px(13,14,1, 1, P.out);
+    for (let y=15; y<23; y++) {
+      px(2, y, 1, 1, P.out);
+      px(3, y, 10, 1, y%2? P.robeD : P.robeM);
+      px(13,y, 1, 1, P.out);
+    }
+    px(2,23, 12, 1, P.out);
+    // hands
+    px(3,16, 1, 1, P.face);
+    px(12,16,1, 1, P.face);
+  }
+
+  // ───────── Sign sprite ─────────
+  const signSprite = document.createElement('canvas');
+  signSprite.width = 16; signSprite.height = 18;
+  {
+    const g = signSprite.getContext('2d');
+    const px=(x,y,w,h,c)=>{g.fillStyle=c;g.fillRect(x,y,w,h);};
+    px(7,10,2,7,'#3a2410');
+    px(2,2,12,1,'#3a2410');
+    px(2,9,12,1,'#3a2410');
+    px(2,3,1,6,'#3a2410');
+    px(13,3,1,6,'#3a2410');
+    px(3,3,10,6,'#7a4e26');
+    px(3,3,10,1,'#b88650');
+    px(3,3,1,5,'#b88650');
+    // text scribbles
+    px(5,5,6,1,'#3a2410');
+    px(5,7,4,1,'#3a2410');
+  }
+
+  // ───────── Triforce marker sprite ─────────
+  function drawTriforce(tg, cx, cy, scale, alpha) {
+    tg.save();
+    tg.globalAlpha = alpha;
+    const s = scale;
+    // outer glow
+    tg.fillStyle = 'rgba(255,215,100,0.25)';
+    tg.beginPath();
+    tg.arc(cx, cy, 12 * s, 0, Math.PI*2);
+    tg.fill();
+    // triforce (3 triangles)
+    tg.fillStyle = '#ffd850';
+    // top triangle
+    tg.beginPath();
+    tg.moveTo(cx, cy - 7*s);
+    tg.lineTo(cx - 4*s, cy - 1*s);
+    tg.lineTo(cx + 4*s, cy - 1*s);
+    tg.closePath(); tg.fill();
+    // bottom-left
+    tg.beginPath();
+    tg.moveTo(cx - 4*s, cy - 1*s);
+    tg.lineTo(cx - 8*s, cy + 5*s);
+    tg.lineTo(cx,       cy + 5*s);
+    tg.closePath(); tg.fill();
+    // bottom-right
+    tg.beginPath();
+    tg.moveTo(cx + 4*s, cy - 1*s);
+    tg.lineTo(cx,       cy + 5*s);
+    tg.lineTo(cx + 8*s, cy + 5*s);
+    tg.closePath(); tg.fill();
+    // highlight
+    tg.fillStyle = '#fff8c0';
+    tg.fillRect(cx - 1, cy - 6*s, 2, 1);
+    tg.restore();
+  }
+
+  // ───────── Text renderer (pixel-ish) ─────────
+  function drawText(g, text, x, y, size, color, align) {
+    g.save();
+    g.font = `bold ${size}px "Courier New", monospace`;
+    g.textAlign = align || 'left';
+    g.textBaseline = 'top';
+    // outline
+    g.fillStyle = '#000';
+    for (const [dx,dy] of [[-1,0],[1,0],[0,-1],[0,1]]) g.fillText(text, x+dx, y+dy);
+    g.fillStyle = color;
+    g.fillText(text, x, y);
+    g.restore();
+  }
+
+  // ───────── Game states ─────────
+  const STATE = { LOADING:0, TITLE:1, OVERWORLD:2, INTERIOR:3, CASTLE:4 };
+  let state = STATE.LOADING;
+
+  // Interior context
+  let interior = null; // { kind:'project', project } OR { kind:'castle', index }
+
+  // Dialog
+  const dialog = { active:false, lines:[], project:null, opened:0 };
+
+  function openDialog(lines, project) {
+    dialog.active = true;
+    dialog.lines = lines.slice(0, 5);
+    dialog.project = project || null;
+    dialog.opened = performance.now();
+  }
+  function closeDialog() { dialog.active = false; dialog.project = null; }
+
+  // ───────── Input ─────────
+  const keys = {};
+  addEventListener('keydown', e => {
+    keys[e.key.toLowerCase()] = true;
+    if (state === STATE.TITLE && (e.key === 'Enter' || e.key === ' ')) { startGame(); e.preventDefault(); }
+    if (e.key === ' ' || e.key === 'Enter') { action(); e.preventDefault(); }
+    if (e.key === 'Escape') { closeDialog(); if (state === STATE.INTERIOR || state === STATE.CASTLE) exitInterior(); }
+  });
+  addEventListener('keyup', e => { keys[e.key.toLowerCase()] = false; });
+
+  // Touch
+  const tBtn = {};
+  document.querySelectorAll('#dpad button').forEach(btn => {
+    const dir = btn.dataset.dir;
+    const on = e => { e.preventDefault(); tBtn[dir] = true; btn.classList.add('active'); };
+    const off = e => { e.preventDefault(); tBtn[dir] = false; btn.classList.remove('active'); };
+    btn.addEventListener('touchstart', on, {passive:false});
+    btn.addEventListener('touchend', off);
+    btn.addEventListener('touchcancel', off);
+    btn.addEventListener('mousedown', on);
+    btn.addEventListener('mouseup', off);
+    btn.addEventListener('mouseleave', off);
+  });
+  const btnA = document.getElementById('btnA');
+  btnA.addEventListener('touchstart', e => { e.preventDefault();
+    if (state === STATE.TITLE) startGame(); else action();
+  }, {passive:false});
+  btnA.addEventListener('mousedown', e => { e.preventDefault();
+    if (state === STATE.TITLE) startGame(); else action();
+  });
+
+  function input(dir) {
+    if (dir === 'up')    return keys['w'] || keys['arrowup']    || tBtn.up;
+    if (dir === 'down')  return keys['s'] || keys['arrowdown']  || tBtn.down;
+    if (dir === 'left')  return keys['a'] || keys['arrowleft']  || tBtn.left;
+    if (dir === 'right') return keys['d'] || keys['arrowright'] || tBtn.right;
+    return false;
+  }
+
+  // ───────── Action (Space / A button) ─────────
+  function action() {
+    if (state === STATE.TITLE) { startGame(); return; }
+    if (dialog.active) {
+      if (dialog.project) {
+        // open project URL
+        window.open(dialog.project.url, '_blank');
+      }
+      closeDialog();
+      return;
+    }
+    if (state === STATE.INTERIOR && interior && interior.kind === 'project') {
+      window.open(interior.project.url, '_blank');
+      return;
+    }
+    if (state === STATE.CASTLE) {
+      // pick the audit Link is standing near
+      const i = auditStandingNear();
+      if (i >= 0) window.open(AUDITS[i].url, '_blank');
+      return;
+    }
+    // Overworld — check interactions
+    interactWithNearby();
+  }
+
+  function interactWithNearby() {
+    // Nearest node within 24px
+    let nearest = null, d2 = 24*24;
+    for (const n of NODES) {
+      const dx = hero.x - n.x, dy = hero.y - n.y;
+      const d = dx*dx + dy*dy;
+      if (d < d2) { d2 = d; nearest = n; }
+    }
+    if (!nearest) return;
+    if (nearest.kind === 'wizard') {
+      openDialog([
+        'Welcome, traveler.',
+        'Georg is the architect here.',
+        'Six houses — each a build.',
+        'Castle — five client audits.',
+        'Go east for the Great Water.',
+      ], null);
+    } else if (nearest.kind === 'sign') {
+      openDialog(nearest.lines, null);
+    } else if (nearest.kind === 'project') {
+      enterInterior({ kind:'project', project: PROJECTS[nearest.key] });
+    } else if (nearest.kind === 'castle') {
+      enterInterior({ kind:'castle' });
+    }
+  }
+
+  function enterInterior(ctx) {
+    interior = ctx;
+    state = ctx.kind === 'castle' ? STATE.CASTLE : STATE.INTERIOR;
+    // place hero at bottom-center of room
+    hero.x = 160; hero.y = 200; hero.dir = 1; // face up
+    fadeT = 0; fadingIn = true;
+  }
+  function exitInterior() {
+    interior = null;
+    state = STATE.OVERWORLD;
+    // return to spawn area near wizard
+    hero.x = 2620; hero.y = 2220; hero.dir = 2;
+    fadeT = 0; fadingIn = true;
+  }
+
+  // Fade transition
+  let fadeT = 0, fadingIn = true;
+
+  // ───────── Title screen ─────────
+  let titleBlink = 0;
+
+  function startGame() {
+    if (state !== STATE.TITLE) return;
+    state = STATE.OVERWORLD;
+    fadeT = 0; fadingIn = true;
+  }
+
+  function drawTitle(g, t) {
+    // starry sky backdrop
+    g.fillStyle = '#04030d';
+    g.fillRect(0, 0, GW, GH);
+    // stars
+    g.fillStyle = '#fff';
+    for (let i = 0; i < 80; i++) {
+      const sx = (i * 37) % GW;
+      const sy = (i * 71) % GH;
+      const tw = ((t * 0.002 + i) % 3) | 0;
+      g.globalAlpha = tw === 0 ? 0.3 : (tw === 1 ? 0.7 : 1);
+      g.fillRect(sx, sy, 1, 1);
+    }
+    g.globalAlpha = 1;
+
+    // mountain silhouette bottom
+    g.fillStyle = '#1a1a2e';
+    g.beginPath();
+    g.moveTo(0, GH);
+    g.lineTo(0, GH - 40);
+    for (let x = 0; x <= GW; x += 16) {
+      const h = 30 + Math.sin(x * 0.07) * 10 + Math.sin(x * 0.3) * 4;
+      g.lineTo(x, GH - h);
+    }
+    g.lineTo(GW, GH);
+    g.closePath();
+    g.fill();
+
+    // Triforce, big and glowing
+    const cx = GW / 2, cy = 85;
+    const pulse = 0.9 + Math.sin(t * 0.003) * 0.1;
+    drawTriforce(g, cx, cy, 3.2 * pulse, 0.9);
+
+    // Title
+    drawText(g, 'THE LEGEND OF', cx, 130, 14, '#ffd850', 'center');
+    g.save();
+    g.font = 'bold 28px "Courier New", monospace';
+    g.textAlign = 'center'; g.textBaseline = 'top';
+    g.fillStyle = '#000';
+    for (const [dx,dy] of [[-2,0],[2,0],[0,-2],[0,2],[-2,-2],[2,2]]) g.fillText('GEORG', cx+dx, 148+dy);
+    // gold gradient
+    const grad = g.createLinearGradient(0, 148, 0, 180);
+    grad.addColorStop(0, '#fff4a0');
+    grad.addColorStop(0.5, '#ffc828');
+    grad.addColorStop(1, '#a06810');
+    g.fillStyle = grad;
+    g.fillText('GEORG', cx, 148);
+    g.restore();
+
+    drawText(g, 'A PORTFOLIO ADVENTURE', cx, 186, 8, '#98d8ff', 'center');
+
+    titleBlink += 1;
+    if ((titleBlink / 30 | 0) % 2 === 0) {
+      drawText(g, '▸ PRESS SPACE OR ENTER ◂', cx, 210, 9, '#fff', 'center');
+    }
+  }
+
+  // ───────── Overworld render ─────────
+  function drawOverworld(g, t) {
+    // Camera follows hero, clamped to map bounds
+    const cx = Math.max(GW/2, Math.min(MAP_W - GW/2, hero.x));
+    const cy = Math.max(GH/2, Math.min(MAP_H - GH/2, hero.y));
+    const camX = Math.round(cx - GW/2);
+    const camY = Math.round(cy - GH/2);
+
+    // Draw map slice
+    g.drawImage(IMG.map, camX, camY, GW, GH, 0, 0, GW, GH);
+
+    // World labels — always-visible destination tags
+    for (const lbl of LABELS) {
+      const sx = lbl.x - camX, sy = lbl.y - camY;
+      if (sx < -60 || sx > GW + 60 || sy < -30 || sy > GH + 30) continue;
+      drawWorldLabel(g, sx, sy, lbl.text, lbl.color, t);
+    }
+
+    // Collect drawable overlays (nodes + hero) sorted by Y for proper painting
+    const overlays = [];
+    for (const n of NODES) overlays.push({ kind: 'node', n });
+    overlays.push({ kind: 'hero' });
+    overlays.sort((a, b) => {
+      const ay = a.kind === 'hero' ? hero.y : a.n.y;
+      const by = b.kind === 'hero' ? hero.y : b.n.y;
+      return ay - by;
+    });
+
+    for (const o of overlays) {
+      if (o.kind === 'hero') {
+        drawLink(g, hero.x - camX, hero.y - camY);
+      } else {
+        const n = o.n;
+        const sx = n.x - camX, sy = n.y - camY;
+        if (sx < -40 || sx > GW + 40 || sy < -40 || sy > GH + 40) continue;
+
+        if (n.kind === 'wizard') {
+          g.drawImage(wizardSprite, Math.round(sx - 8), Math.round(sy - 22));
+        } else if (n.kind === 'sign') {
+          g.drawImage(signSprite, Math.round(sx - 8), Math.round(sy - 16));
+        } else if (n.kind === 'project' || n.kind === 'castle') {
+          // Glowing warp portal on the ground
+          const pulse = 0.7 + Math.sin(t * 0.005 + n.x) * 0.3;
+          drawTriforce(g, sx, sy - 2, n.kind === 'castle' ? 1.4 : 1.0, pulse);
+          // Label banner above
+          const label = n.kind === 'castle' ? 'AUDIT CASTLE' :
+                        PROJECTS[n.key].name.toUpperCase();
+          drawLabelBanner(g, sx, sy - 22, label, n.kind === 'castle' ? '#ff7090' : '#ffd850');
+        }
+      }
+    }
+
+    // HUD — location title top-center
+    drawHUD(g);
+
+    // Dialog box
+    if (dialog.active) drawDialog(g);
+
+    // Proximity prompt
+    drawActionPrompt(g);
+
+    // Fade
+    drawFade(g);
+  }
+
+  function drawWorldLabel(g, cx, cy, text, color, t) {
+    // Floating pill with drop-shadow, gentle bob
+    const bob = Math.sin(t * 0.002 + cx * 0.01) * 1.2;
+    g.save();
+    g.font = 'bold 10px "Courier New", monospace';
+    g.textAlign = 'center'; g.textBaseline = 'middle';
+    const w = g.measureText(text).width + 14;
+    const x = Math.round(cx - w / 2);
+    const y = Math.round(cy + bob - 7);
+    // shadow plate
+    g.fillStyle = 'rgba(0,0,0,0.55)';
+    g.fillRect(x + 1, y + 1, w, 14);
+    // body
+    g.fillStyle = 'rgba(18,10,34,0.92)';
+    g.fillRect(x, y, w, 14);
+    // accent line
+    g.fillStyle = color;
+    g.fillRect(x, y + 12, w, 2);
+    // text
+    g.fillStyle = color;
+    g.fillText(text, Math.round(cx), Math.round(y + 6));
+    g.restore();
+  }
+
+  function drawLabelBanner(g, cx, cy, text, color) {
+    g.save();
+    g.font = 'bold 8px "Courier New", monospace';
+    g.textAlign = 'center'; g.textBaseline = 'middle';
+    const w = g.measureText(text).width + 8;
+    const x = Math.round(cx - w / 2), y = Math.round(cy - 5);
+    // background plate
+    g.fillStyle = 'rgba(20,10,40,0.82)';
+    g.fillRect(x, y, w, 10);
+    g.strokeStyle = color;
+    g.lineWidth = 1;
+    g.strokeRect(x + 0.5, y + 0.5, w - 1, 9);
+    g.fillStyle = color;
+    g.fillText(text, Math.round(cx), Math.round(cy));
+    g.restore();
+  }
+
+  function drawHUD(g) {
+    // top title strip
+    g.save();
+    const grad = g.createLinearGradient(0, 0, 0, 18);
+    grad.addColorStop(0, 'rgba(0,0,0,0.7)');
+    grad.addColorStop(1, 'rgba(0,0,0,0)');
+    g.fillStyle = grad;
+    g.fillRect(0, 0, GW, 18);
+    drawText(g, 'KINGDOM  OF  GEORG', GW/2, 4, 10, '#ffd850', 'center');
+    g.restore();
+  }
+
+  function drawActionPrompt(g) {
+    if (dialog.active) return;
+    let label = null;
+    for (const n of NODES) {
+      const dx = hero.x - n.x, dy = hero.y - n.y;
+      if (dx*dx + dy*dy < 22*22) {
+        if (n.kind === 'wizard') label = 'TALK';
+        else if (n.kind === 'sign') label = 'READ';
+        else if (n.kind === 'project') label = 'ENTER  ' + PROJECTS[n.key].name.toUpperCase();
+        else if (n.kind === 'castle') label = 'ENTER  THE  CASTLE';
+        break;
+      }
+    }
+    if (!label) return;
+    g.save();
+    g.font = 'bold 8px "Courier New", monospace';
+    g.textAlign = 'center';
+    const w = g.measureText(label).width + 18;
+    const x = GW/2 - w/2;
+    const y = GH - 22;
+    g.fillStyle = 'rgba(0,0,0,0.8)';
+    g.fillRect(x, y, w, 14);
+    g.strokeStyle = '#ffd850'; g.lineWidth = 1;
+    g.strokeRect(x + 0.5, y + 0.5, w - 1, 13);
+    g.fillStyle = '#ffd850';
+    g.textBaseline = 'middle';
+    g.fillText('▸ ' + label, GW/2, y + 7);
+    g.restore();
+  }
+
+  function drawDialog(g) {
+    const boxH = 86;
+    const y = GH - boxH - 4;
+    g.save();
+    // parchment
+    g.fillStyle = 'rgba(18,10,34,0.94)';
+    g.fillRect(4, y, GW - 8, boxH);
+    g.strokeStyle = '#ffd850'; g.lineWidth = 2;
+    g.strokeRect(5, y + 1, GW - 10, boxH - 2);
+    g.strokeStyle = '#a07020';
+    g.strokeRect(8, y + 4, GW - 16, boxH - 8);
+
+    g.font = '10px "Courier New", monospace';
+    g.fillStyle = '#fff';
+    g.textBaseline = 'top';
+    let ly = y + 10;
+    for (const line of dialog.lines) {
+      g.fillStyle = '#000';
+      g.fillText(line, 15, ly + 1);
+      g.fillStyle = '#fff';
+      g.fillText(line, 14, ly);
+      ly += 12;
+    }
+    if (dialog.project) {
+      drawText(g, '▸ PRESS A TO VISIT SITE', GW/2, y + boxH - 12, 8, '#98ff98', 'center');
+    } else {
+      drawText(g, '▸ PRESS A TO CONTINUE', GW/2, y + boxH - 12, 8, '#98d8ff', 'center');
+    }
+    g.restore();
+  }
+
+  function drawFade(g) {
+    if (fadingIn) {
+      const a = Math.max(0, 1 - fadeT / 600);
+      if (a <= 0) return;
+      g.fillStyle = `rgba(0,0,0,${a})`;
+      g.fillRect(0, 0, GW, GH);
+    }
+  }
+
+  // ───────── Interior (product house) ─────────
+  function drawRoomBG(g) {
+    // Warm wooden plank floor
+    g.fillStyle = '#e8c488';
+    g.fillRect(0, 0, GW, GH);
+    // Plank stripes
+    g.fillStyle = '#d4a868';
+    for (let y = 0; y < GH; y += 16) g.fillRect(0, y, GW, 8);
+    // Plank seams
+    g.fillStyle = 'rgba(80,50,20,0.35)';
+    for (let y = 0; y < GH; y += 16) g.fillRect(0, y + 8, GW, 1);
+    // Vertical plank break offsets (stagger)
+    g.fillStyle = 'rgba(80,50,20,0.5)';
+    for (let y = 0; y < GH; y += 16) {
+      const off = (y / 16) % 2 === 0 ? 30 : 60;
+      for (let x = off; x < GW; x += 90) g.fillRect(x, y, 1, 8);
+      for (let x = off + 45; x < GW; x += 90) g.fillRect(x, y + 8, 1, 8);
+    }
+
+    // Top wood-paneled wall
+    const wallH = 34;
+    g.fillStyle = '#6a3a18';
+    g.fillRect(0, 0, GW, wallH);
+    g.fillStyle = '#8a5a24';
+    g.fillRect(0, 4, GW, wallH - 8);
+    g.fillStyle = '#a87838';
+    g.fillRect(0, 6, GW, 2);
+    // plank lines
+    g.fillStyle = '#4a2408';
+    for (let x = 0; x < GW; x += 32) g.fillRect(x, 4, 1, wallH - 8);
+    // wall/floor seam
+    g.fillStyle = '#3a1a04';
+    g.fillRect(0, wallH, GW, 2);
+    g.fillStyle = '#ffd890';
+    g.fillRect(0, wallH + 2, GW, 1);
+
+    // Side wood trim
+    g.fillStyle = '#8a5a24';
+    g.fillRect(0, wallH, 6, GH - wallH);
+    g.fillRect(GW - 6, wallH, 6, GH - wallH);
+    g.fillStyle = '#4a2408';
+    g.fillRect(6, wallH, 1, GH - wallH);
+    g.fillRect(GW - 7, wallH, 1, GH - wallH);
+
+    // Bottom step
+    g.fillStyle = '#6a3a18';
+    g.fillRect(0, GH - 6, GW, 6);
+    g.fillStyle = '#a87838';
+    g.fillRect(0, GH - 6, GW, 2);
+
+    // Wall torches (flickering)
+    const flick = 0.8 + Math.sin(performance.now() * 0.01) * 0.2;
+    for (const tx of [30, GW - 30]) {
+      // sconce
+      g.fillStyle = '#1a0a04';
+      g.fillRect(tx - 3, 8, 6, 10);
+      g.fillStyle = '#4a2a14';
+      g.fillRect(tx - 2, 8, 4, 2);
+      // flame
+      g.fillStyle = `rgba(255,200,100,${0.9 * flick})`;
+      g.fillRect(tx - 2, 4, 4, 5);
+      g.fillStyle = `rgba(255,240,180,${0.95 * flick})`;
+      g.fillRect(tx - 1, 5, 2, 3);
+      // light halo
+      g.globalAlpha = 0.15 * flick;
+      g.fillStyle = '#ffcc80';
+      g.beginPath(); g.arc(tx, 10, 24, 0, Math.PI*2); g.fill();
+      g.globalAlpha = 1;
+    }
+  }
+
+  function drawInterior(g, t) {
+    drawRoomBG(g);
+
+    const proj = interior.project;
+
+    // Carpet
+    g.save();
+    g.fillStyle = '#a03030';
+    g.fillRect(GW/2 - 30, 80, 60, 120);
+    g.fillStyle = '#d85050';
+    g.fillRect(GW/2 - 28, 82, 56, 116);
+    g.fillStyle = '#803030';
+    for (let i = 0; i < 6; i++) g.fillRect(GW/2 - 28, 82 + i * 22, 56, 2);
+    g.restore();
+
+    // Sign on wall with project info
+    const sx = GW/2 - 72, sy = 30, sw = 144, sh = 58;
+    g.fillStyle = '#3a2410';
+    g.fillRect(sx - 2, sy - 2, sw + 4, sh + 4);
+    g.fillStyle = '#7a4e26';
+    g.fillRect(sx, sy, sw, sh);
+    g.fillStyle = '#b88650';
+    g.fillRect(sx, sy, sw, 3);
+    g.fillRect(sx, sy, 3, sh);
+    g.strokeStyle = '#3a2410';
+    g.strokeRect(sx + 3.5, sy + 3.5, sw - 7, sh - 7);
+
+    drawText(g, proj.name.toUpperCase(), GW/2, sy + 6, 12, '#fff8c0', 'center');
+    drawText(g, '— ' + proj.tag + ' —', GW/2, sy + 20, 7, '#ffd850', 'center');
+    let dy = sy + 32;
+    for (const line of proj.desc) { drawText(g, line, GW/2, dy, 8, '#f0e0a0', 'center'); dy += 9; }
+
+    // Glowing portal under Link
+    const portalCx = GW/2, portalCy = 170;
+    const pulse = 0.8 + Math.sin(t * 0.006) * 0.3;
+    g.save();
+    g.fillStyle = `rgba(120,220,255,${0.3 * pulse})`;
+    g.beginPath(); g.ellipse(portalCx, portalCy + 8, 16, 6, 0, 0, Math.PI*2); g.fill();
+    g.strokeStyle = `rgba(200,240,255,${pulse})`;
+    g.lineWidth = 1.5;
+    g.beginPath(); g.ellipse(portalCx, portalCy + 8, 14, 5, 0, 0, Math.PI*2); g.stroke();
+    g.restore();
+
+    // Hero in the room
+    drawLink(g, hero.x, hero.y);
+
+    // Prompt
+    const distToPortal = Math.hypot(hero.x - portalCx, hero.y - (portalCy + 8));
+    if (distToPortal < 20) {
+      drawActionBar(g, '▸ STEP INTO PORTAL — VISIT ' + proj.name.toUpperCase());
+    } else {
+      drawActionBar(g, '◂ EXIT  (ESC)        STEP ON PORTAL TO VISIT ▸');
+    }
+
+    // HUD
+    g.save();
+    g.fillStyle = 'rgba(0,0,0,0.6)';
+    g.fillRect(0, 0, GW, 14);
+    drawText(g, 'HOUSE OF ' + proj.name.toUpperCase(), GW/2, 3, 9, '#ffd850', 'center');
+    g.restore();
+
+    drawFade(g);
+  }
+
+  function drawActionBar(g, label) {
+    g.save();
+    g.font = 'bold 8px "Courier New", monospace';
+    g.textAlign = 'center';
+    const w = Math.min(GW - 8, g.measureText(label).width + 18);
+    const x = GW/2 - w/2;
+    const y = GH - 20;
+    g.fillStyle = 'rgba(0,0,0,0.82)';
+    g.fillRect(x, y, w, 14);
+    g.strokeStyle = '#ffd850'; g.lineWidth = 1;
+    g.strokeRect(x + 0.5, y + 0.5, w - 1, 13);
+    g.fillStyle = '#ffd850';
+    g.textBaseline = 'middle';
+    g.fillText(label, GW/2, y + 7);
+    g.restore();
+  }
+
+  // ───────── Castle interior (audits) ─────────
+  // 5 portraits lining the walls. Each marked as audit[i].
+  // Portrait positions in castle room coordinate space (canvas px).
+  const CASTLE_PORTRAITS = [
+    { x:  55, y:  72 },
+    { x: 110, y:  55 },
+    { x: 165, y:  48 },
+    { x: 220, y:  55 },
+    { x: 275, y:  72 },
+  ];
+
+  function auditStandingNear() {
+    for (let i = 0; i < CASTLE_PORTRAITS.length; i++) {
+      const p = CASTLE_PORTRAITS[i];
+      if (Math.hypot(hero.x - p.x, hero.y - (p.y + 26)) < 18) return i;
+    }
+    return -1;
+  }
+
+  function drawCastleInterior(g, t) {
+    drawRoomBG(g);
+
+    // Throne (top center)
+    {
+      const tx = GW/2 - 14, ty = 30;
+      g.fillStyle = '#1a1a1a'; g.fillRect(tx - 2, ty - 2, 32, 36);
+      g.fillStyle = '#5030a8'; g.fillRect(tx, ty, 28, 32);
+      g.fillStyle = '#8050d8'; g.fillRect(tx + 2, ty + 2, 24, 6);
+      g.fillStyle = '#ffd850'; g.fillRect(tx + 12, ty + 10, 4, 4); // gem
+    }
+
+    // Red carpet from throne to Link
+    g.fillStyle = '#a03030';
+    g.fillRect(GW/2 - 14, 64, 28, 160);
+    g.fillStyle = '#d85050';
+    g.fillRect(GW/2 - 12, 66, 24, 156);
+    g.fillStyle = '#803030';
+    for (let y = 66; y < 220; y += 24) g.fillRect(GW/2 - 12, y, 24, 2);
+
+    // Portraits on the walls
+    const pulseNear = auditStandingNear();
+    for (let i = 0; i < CASTLE_PORTRAITS.length; i++) {
+      const p = CASTLE_PORTRAITS[i];
+      const a = AUDITS[i];
+      drawPortrait(g, p.x, p.y, a.name, a.tag, pulseNear === i, t);
+    }
+
+    // Hero
+    drawLink(g, hero.x, hero.y);
+
+    // Prompt
+    if (pulseNear >= 0) {
+      const a = AUDITS[pulseNear];
+      drawActionBar(g, '▸ READ AUDIT: ' + a.name.toUpperCase());
+    } else {
+      drawActionBar(g, '◂ EXIT (ESC)    WALK TO A PORTRAIT ▸');
+    }
+
+    // HUD
+    g.save();
+    g.fillStyle = 'rgba(0,0,0,0.65)';
+    g.fillRect(0, 0, GW, 14);
+    drawText(g, 'CASTLE OF AUDITS — FIVE CLIENT WORKS', GW/2, 3, 9, '#ff90b0', 'center');
+    g.restore();
+
+    drawFade(g);
+  }
+
+  function drawPortrait(g, cx, cy, name, tag, highlighted, t) {
+    const w = 36, h = 44;
+    const x = cx - w/2, y = cy - h/2;
+    // frame
+    g.fillStyle = '#3a2410';
+    g.fillRect(x - 3, y - 3, w + 6, h + 6);
+    g.fillStyle = highlighted ? '#ffc848' : '#a07838';
+    g.fillRect(x - 2, y - 2, w + 4, h + 4);
+    g.fillStyle = '#3a2410';
+    g.fillRect(x, y, w, h);
+    // canvas
+    const hue = (cx * 7 + cy * 13) % 360;
+    g.fillStyle = `hsl(${hue}, 40%, 28%)`;
+    g.fillRect(x + 2, y + 2, w - 4, h - 4);
+    // silhouette head
+    g.fillStyle = `hsl(${hue}, 30%, 15%)`;
+    g.beginPath();
+    g.arc(cx, y + 14, 7, 0, Math.PI*2);
+    g.fill();
+    g.fillRect(cx - 9, y + 20, 18, 16);
+    // nameplate
+    g.fillStyle = '#3a2410';
+    g.fillRect(x - 4, y + h + 3, w + 8, 10);
+    g.fillStyle = '#b88650';
+    g.fillRect(x - 3, y + h + 4, w + 6, 8);
+    drawText(g, name.toUpperCase(), cx, y + h + 5, 6, '#2a1408', 'center');
+
+    // highlight glow
+    if (highlighted) {
+      const pulse = 0.4 + Math.sin(t * 0.008) * 0.3;
+      g.save();
+      g.globalAlpha = pulse;
+      g.strokeStyle = '#fff8c0'; g.lineWidth = 2;
+      g.strokeRect(x - 4, y - 4, w + 8, h + 8);
+      g.restore();
+      // tag tooltip
+      drawText(g, tag, cx, y - 12, 7, '#ffd850', 'center');
+    }
+  }
+
+  // ───────── Update ─────────
+  let lastT = 0;
+  function update(dt) {
+    fadeT += dt;
+    if (state === STATE.OVERWORLD) {
+      let dx = 0, dy = 0;
+      if (input('up')) dy -= 1;
+      else if (input('down')) dy += 1;
+      if (input('left')) dx -= 1;
+      else if (input('right')) dx += 1;
+      if (dx !== 0 && dy !== 0) { dx *= 0.7071; dy *= 0.7071; }
+
+      const speed = 1.1;
+      if (!dialog.active && (dx || dy)) {
+        const nx = hero.x + dx * speed, ny = hero.y + dy * speed;
+        // try both axes, then each separately (sliding against walls)
+        if (canMoveTo(nx, ny)) { hero.x = nx; hero.y = ny; }
+        else if (canMoveTo(nx, hero.y)) { hero.x = nx; }
+        else if (canMoveTo(hero.x, ny)) { hero.y = ny; }
+        // face direction
+        if (Math.abs(dx) > Math.abs(dy)) hero.dir = dx < 0 ? 2 : 3;
+        else hero.dir = dy < 0 ? 1 : 0;
+        hero.moving = true;
+        hero.ftime += dt;
+        if (hero.ftime > 120) { hero.frame++; hero.ftime = 0; }
+      } else {
+        hero.moving = false;
+        hero.frame = 0;
+      }
+    } else if (state === STATE.INTERIOR || state === STATE.CASTLE) {
+      // Free walk inside room, clamped to inner area
+      let dx = 0, dy = 0;
+      if (input('up')) dy -= 1;
+      else if (input('down')) dy += 1;
+      if (input('left')) dx -= 1;
+      else if (input('right')) dx += 1;
+      if (dx !== 0 && dy !== 0) { dx *= 0.7071; dy *= 0.7071; }
+
+      const speed = 1.2;
+      if (!dialog.active && (dx || dy)) {
+        const nx = Math.max(40, Math.min(GW - 40, hero.x + dx * speed));
+        const ny = Math.max(50, Math.min(GH - 30, hero.y + dy * speed));
+        hero.x = nx; hero.y = ny;
+        if (Math.abs(dx) > Math.abs(dy)) hero.dir = dx < 0 ? 2 : 3;
+        else hero.dir = dy < 0 ? 1 : 0;
+        hero.moving = true;
+        hero.ftime += dt;
+        if (hero.ftime > 120) { hero.frame++; hero.ftime = 0; }
+      } else {
+        hero.moving = false;
+        hero.frame = 0;
+      }
+
+      // auto-visit on portal step in project interior
+      if (state === STATE.INTERIOR && !dialog.active) {
+        const dPortal = Math.hypot(hero.x - GW/2, hero.y - 178);
+        if (dPortal < 10) {
+          window.open(interior.project.url, '_blank');
+          exitInterior();
+        }
+      }
+
+      // exit at bottom of screen
+      if (hero.y >= GH - 30 && (input('down') || false)) {
+        // handled by ESC primarily; but allow hold-down exit
+      }
+    }
+  }
+
+  // ───────── Main loop ─────────
+  function frame(t) {
+    const dt = Math.min(40, t - lastT);
+    lastT = t;
+    update(dt);
+
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, GW, GH);
+
+    if (state === STATE.TITLE) drawTitle(ctx, t);
+    else if (state === STATE.OVERWORLD) drawOverworld(ctx, t);
+    else if (state === STATE.INTERIOR) drawInterior(ctx, t);
+    else if (state === STATE.CASTLE) drawCastleInterior(ctx, t);
+
+    requestAnimationFrame(frame);
+  }
+
+  // Expose debug handles
+  window.__zeldaDebug = { get hero() { return hero; }, get state() { return state; },
+    canMoveTo, walkableAt, setHero(x,y) { hero.x = x; hero.y = y; } };
+
+  // ───────── Boot ─────────
+  async function boot() {
+    try {
+      const [mapImg, interiorImgRaw] = await Promise.all([
+        loadImage(ASSETS.map),
+        loadImage(ASSETS.interior),
+      ]);
+      IMG.map = mapImg;
+      // House interior PNG uses magenta transparency (#FF00FF) and black borders
+      IMG.interior = makeTransparent(interiorImgRaw, [[255, 0, 255]]);
+
+      // Pre-compute walkability grid from map pixels
+      const mc = document.createElement('canvas');
+      mc.width = mapImg.width; mc.height = mapImg.height;
+      const mg = mc.getContext('2d');
+      mg.drawImage(mapImg, 0, 0);
+      const pxData = mg.getImageData(0, 0, mapImg.width, mapImg.height).data;
+      walkGrid = buildWalkGrid(pxData);
+
+      document.getElementById('loading').style.display = 'none';
+      state = STATE.TITLE;
+      requestAnimationFrame(t => { lastT = t; frame(t); });
+    } catch (e) {
+      document.getElementById('loading').textContent = 'FAILED TO LOAD ASSETS';
+      console.error(e);
+    }
+  }
+
+  boot();
+})();
+</script>
+</body>
+</html>

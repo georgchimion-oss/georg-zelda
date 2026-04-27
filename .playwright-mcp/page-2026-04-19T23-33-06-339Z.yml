@@ -1,0 +1,487 @@
+- generic [active] [ref=e1]:
+  - navigation [ref=e2]:
+    - generic [ref=e3]:
+      - link "M MT & PF · Growth Audit v2" [ref=e4] [cursor=pointer]:
+        - /url: "#top"
+        - generic [ref=e5]: M
+        - generic [ref=e6]: MT & PF · Growth Audit v2
+      - generic [ref=e7]:
+        - link "Strengths" [ref=e8] [cursor=pointer]:
+          - /url: "#working"
+        - link "Score" [ref=e9] [cursor=pointer]:
+          - /url: "#score"
+        - link "Competitive" [ref=e10] [cursor=pointer]:
+          - /url: "#competitive"
+        - link "Growth Playbook" [ref=e11] [cursor=pointer]:
+          - /url: "#growth"
+        - link "90-Day Sprint" [ref=e12] [cursor=pointer]:
+          - /url: "#sprint"
+        - link "Infrastructure" [ref=e13] [cursor=pointer]:
+          - /url: "#infra"
+        - link "AI & Ops" [ref=e14] [cursor=pointer]:
+          - /url: "#ai"
+        - link "The Play" [ref=e15] [cursor=pointer]:
+          - /url: "#play"
+  - banner [ref=e16]:
+    - generic [ref=e17]:
+      - generic [ref=e18]: Private · Growth Audit · v2
+      - heading "PropertyForce & Meridian Trust — the deal flow is real. The problem is distribution." [level=1] [ref=e19]
+      - paragraph [ref=e20]: A strategic growth audit focused on amplifying a 15-year lead-gen engine and capturing the 34 weekly hours currently lost to manual call review.
+      - generic [ref=e21]:
+        - generic [ref=e22]:
+          - strong [ref=e23]: "Prepared for:"
+          - text: Jordan Davis & Robert Seidler · C2C Homes / Meridian Trust
+        - generic [ref=e24]:
+          - strong [ref=e25]: "Prepared by:"
+          - text: Georg Chimion ·
+          - link "georg.chimion@gmail.com" [ref=e26] [cursor=pointer]:
+            - /url: mailto:georg.chimion@gmail.com
+        - generic [ref=e27]:
+          - strong [ref=e28]: "Version:"
+          - text: 2.0 · April 19, 2026
+  - generic [ref=e30]:
+    - generic [ref=e31]: Start with what's real
+    - heading "What's already working — and worth protecting" [level=2] [ref=e32]
+    - paragraph [ref=e33]: "Before anything else, a fair read: you run a durable business inside one of the hardest verticals in real estate. Four findings that earn trust with any investor, partner, or acquirer who looks."
+    - generic [ref=e34]:
+      - generic [ref=e35]:
+        - generic [ref=e36]: "01"
+        - heading "Trust signals competitors can't fake" [level=3] [ref=e37]
+        - paragraph [ref=e38]: "Meridian Trust: BBB A+ accredited since 2012, 4.7-star average across 317+ Birdeye reviews, \"Top Workplace\" (Sun-Sentinel). That foundation took 15 years to earn — it's the single biggest asset neither PF nor competitors can shortcut."
+      - generic [ref=e39]:
+        - generic [ref=e40]: "02"
+        - heading "Smart entity architecture" [level=3] [ref=e41]
+        - paragraph [ref=e42]: Synergy / C2C / Meridian Trust Investments / PropertyForce DBA — liability isolated across flips, rentals, and marketing shell. USPTO confirms Meridian Trust owns the PROPERTYFORCE mark. Legal hygiene is A-tier.
+      - generic [ref=e43]:
+        - generic [ref=e44]: "03"
+        - heading "Real operating footprint — FL · GA · AL" [level=3] [ref=e45]
+        - paragraph [ref=e46]: Three-state coverage with established cash-offer intake, direct-mail infrastructure, and an active acquisitions team. Deal flow isn't theoretical; it's a weekly calendar you don't have to rebuild.
+      - generic [ref=e47]:
+        - generic [ref=e48]: "04"
+        - heading "Experienced bench, lean overhead" [level=3] [ref=e49]
+        - paragraph [ref=e50]: Jordan (acquisitions), Robert (legal signatory), Bryan (MBA-FIU, ops), Randy (Master of Accounting, controller). Four people making decisions that would take 40 at a franchise. Speed is a moat.
+  - generic [ref=e52]:
+    - generic [ref=e53]: Where you stand
+    - heading "Growth score — and how it's calculated" [level=2] [ref=e54]
+    - paragraph [ref=e55]: This isn't a grade on your business. It measures digital & distribution leverage — the specific places where a well-run operation leaves money on the table. Click any dimension to see exactly how it was scored.
+    - generic [ref=e56]:
+      - generic [ref=e57]:
+        - generic [ref=e58]:
+          - img [ref=e59]
+          - generic [ref=e62]:
+            - generic [ref=e63]: "57"
+            - generic [ref=e64]: out of 100
+        - generic [ref=e65]:
+          - heading "A strong operator under-indexed on distribution." [level=3] [ref=e66]
+          - paragraph [ref=e67]: You score top-decile on trust and operations — the hardest things to fix. You score bottom-quartile on SEO, security, and call intelligence — the easiest things to fix fast. The gap between "what you're known for" and "what Google shows" is the whole audit.
+      - generic [ref=e68]:
+        - button "Trust Signals 9/10" [ref=e69] [cursor=pointer]:
+          - generic [ref=e70]:
+            - generic [ref=e71]: Trust Signals
+            - generic [ref=e72]: 9/10
+        - button "Deal Flow & Operations 8/10" [ref=e76] [cursor=pointer]:
+          - generic [ref=e77]:
+            - generic [ref=e78]: Deal Flow & Operations
+            - generic [ref=e79]: 8/10
+        - button "Entity Architecture 8/10" [ref=e83] [cursor=pointer]:
+          - generic [ref=e84]:
+            - generic [ref=e85]: Entity Architecture
+            - generic [ref=e86]: 8/10
+        - button "Team Quality 7/10" [ref=e90] [cursor=pointer]:
+          - generic [ref=e91]:
+            - generic [ref=e92]: Team Quality
+            - generic [ref=e93]: 7/10
+        - button "Marketing Infrastructure 7/10" [ref=e97] [cursor=pointer]:
+          - generic [ref=e98]:
+            - generic [ref=e99]: Marketing Infrastructure
+            - generic [ref=e100]: 7/10
+        - button "CRM & Sales Stack 6/10" [ref=e104] [cursor=pointer]:
+          - generic [ref=e105]:
+            - generic [ref=e106]: CRM & Sales Stack
+            - generic [ref=e107]: 6/10
+        - button "SEO & Content 5/10" [ref=e111] [cursor=pointer]:
+          - generic [ref=e112]:
+            - generic [ref=e113]: SEO & Content
+            - generic [ref=e114]: 5/10
+        - button "AI/Automation Readiness 3/10" [ref=e118] [cursor=pointer]:
+          - generic [ref=e119]:
+            - generic [ref=e120]: AI/Automation Readiness
+            - generic [ref=e121]: 3/10
+        - button "Call Intelligence 2/10" [ref=e125] [cursor=pointer]:
+          - generic [ref=e126]:
+            - generic [ref=e127]: Call Intelligence
+            - generic [ref=e128]: 2/10
+        - button "Digital Security 2/10" [ref=e132] [cursor=pointer]:
+          - generic [ref=e133]:
+            - generic [ref=e134]: Digital Security
+            - generic [ref=e135]: 2/10
+    - generic [ref=e139]:
+      - generic [ref=e140]: ▲ Cost of Inaction
+      - heading "Roughly $18K/month in compounding losses" [level=3] [ref=e141]
+      - paragraph [ref=e142]:
+        - strong [ref=e143]: ~34 hours/week
+        - text: of rep + manager time burned on call review and data entry (≈ $6K/mo fully-loaded).
+        - strong [ref=e144]: Florida Cash Home Buyers
+        - text: captures "sell my house fast [FL metro]" queries Meridian Trust's dead blog used to rank for — estimated
+        - strong [ref=e145]: 40-80 leads/month
+        - text: leaking at $65-170 CPL ($2.6K-$13.6K). The $24K/yr Natterbox-AI decision costs ~$15K/year vs. building — $1.25K/mo. These three add to roughly
+        - strong [ref=e146]: $18K/month — $216K/year
+        - text: ", growing every quarter the fix is delayed."
+  - generic [ref=e148]:
+    - generic [ref=e149]: Competitive landscape
+    - heading "Florida Cash Home Buyers isn't better. They're louder." [level=2] [ref=e150]
+    - paragraph [ref=e151]: One competitor is doing distribution so aggressively it's warping the SERP. They're not a better operator than you — they've just refused to be invisible on Google.
+    - generic [ref=e152]:
+      - text: “
+      - blockquote [ref=e153]:
+        - text: Florida Cash Home Buyers has
+        - strong [ref=e154]: 229 Google reviews
+        - text: and a city-by-city landing page for every FL metro. They're not 10× better operators than Meridian Trust — they're 10× more visible.
+      - generic [ref=e155]: — the pattern across every "we buy houses" SERP in Florida
+    - table [ref=e157]:
+      - rowgroup [ref=e158]:
+        - row "Operator Google Reviews BBB City SEO Pages Sophistication" [ref=e159]:
+          - columnheader "Operator" [ref=e160]
+          - columnheader "Google Reviews" [ref=e161]
+          - columnheader "BBB" [ref=e162]
+          - columnheader "City SEO Pages" [ref=e163]
+          - columnheader "Sophistication" [ref=e164]
+      - rowgroup [ref=e165]:
+        - row "Florida Cash Home Buyers (Ft. Lauderdale) 229 A+ since 2015 Every major FL metro Heavy SEO, weak phone UX" [ref=e166]:
+          - cell "Florida Cash Home Buyers (Ft. Lauderdale)" [ref=e167]:
+            - strong [ref=e168]: Florida Cash Home Buyers
+            - text: (Ft. Lauderdale)
+          - cell "229" [ref=e169]
+          - cell "A+ since 2015" [ref=e170]
+          - cell "Every major FL metro" [ref=e171]
+          - cell "Heavy SEO, weak phone UX" [ref=e172]
+        - row "Jax Home Buyers / Buying Jax Homes ~180 combined A+ Jacksonville-deep Regional specialist, narrow" [ref=e173]:
+          - cell "Jax Home Buyers / Buying Jax Homes" [ref=e174]
+          - cell "~180 combined" [ref=e175]
+          - cell "A+" [ref=e176]
+          - cell "Jacksonville-deep" [ref=e177]
+          - cell "Regional specialist, narrow" [ref=e178]
+        - row "HomeVestors (We Buy Ugly Houses) National agg A+ Franchise-per-territory Brand-heavy, franchise friction" [ref=e179]:
+          - cell "HomeVestors (We Buy Ugly Houses)" [ref=e180]
+          - cell "National agg" [ref=e181]
+          - cell "A+" [ref=e182]
+          - cell "Franchise-per-territory" [ref=e183]
+          - cell "Brand-heavy, franchise friction" [ref=e184]
+        - row "Express Homebuyers 1,400+ national A+ National + state Slick funnel, distant ops" [ref=e185]:
+          - cell "Express Homebuyers" [ref=e186]
+          - cell "1,400+ national" [ref=e187]
+          - cell "A+" [ref=e188]
+          - cell "National + state" [ref=e189]
+          - cell "Slick funnel, distant ops" [ref=e190]
+        - row "Meridian Trust (you) 317 Birdeye agg · ~300 Google A+ since 2012 None 15-yr brand, no SERP" [ref=e191]:
+          - cell "Meridian Trust (you)" [ref=e192]:
+            - strong [ref=e193]: Meridian Trust
+            - text: (you)
+          - cell "317 Birdeye agg · ~300 Google" [ref=e194]:
+            - strong [ref=e195]: 317 Birdeye agg · ~300 Google
+          - cell "A+ since 2012" [ref=e196]:
+            - strong [ref=e197]: A+ since 2012
+          - cell "None" [ref=e198]:
+            - strong [ref=e199]: None
+          - cell "15-yr brand, no SERP" [ref=e200]:
+            - strong [ref=e201]: 15-yr brand, no SERP
+    - generic [ref=e202]:
+      - heading "The pattern" [level=4] [ref=e203]
+      - paragraph [ref=e204]:
+        - text: Your reviews aren't the problem — you have more than most. Your
+        - emphasis [ref=e205]: surface area
+        - text: is the problem. FCHB has one page per city indexed; MT has one page total for three states. Fix that and the 15-year brand becomes the 15-year
+        - emphasis [ref=e206]: moat
+        - text: .
+  - generic [ref=e208]:
+    - generic [ref=e209]: Industry-specific growth
+    - heading "How cash-buyer operations actually grow (offline first)" [level=2] [ref=e210]
+    - paragraph [ref=e211]:
+      - text: Real estate acquisition grows through
+      - emphasis [ref=e212]: relationships
+      - text: before it grows through
+      - emphasis [ref=e213]: websites
+      - text: . Here are the five levers that move seller inventory in Florida — in the order that ROI-per-dollar says matters.
+    - generic [ref=e214]:
+      - generic [ref=e215]:
+        - generic [ref=e216]: Lever 01 · Offline
+        - heading "Probate attorney referral network" [level=3] [ref=e217]
+        - paragraph [ref=e218]: The highest-motivation seller in Florida is an estate administrator. Build a compliant referral pipeline with 5-10 probate firms per metro. This is how the best-run buyers in FL get 30-40% of their inventory.
+        - list [ref=e219]:
+          - listitem [ref=e220]: Offer cash close in 10 days + clean title process
+          - listitem [ref=e221]:
+            - text: Monthly probate list from
+            - emphasis [ref=e222]: All The Leads
+            - text: (Mailbox Motivator)
+          - listitem [ref=e223]: Quarterly CLE lunch-and-learn for partner firms
+        - generic [ref=e224]:
+          - strong [ref=e225]: "FL firms to open with:"
+          - text: Florida Probate Law Group, Statewide Probate, David S. Luber Esq., Legal Counsel P.A., Kingcade Garcia McMaken.
+      - generic [ref=e226]:
+        - generic [ref=e227]: Lever 02 · Offline
+        - heading "Divorce & bankruptcy attorney partnerships" [level=3] [ref=e228]
+        - paragraph [ref=e229]: Second-highest-motivation seller cohort. Attorneys want a fast, compliant close as much as the homeowner does. Same playbook, different door.
+        - list [ref=e230]:
+          - listitem [ref=e231]: Referral fee structure vetted by FL Bar
+          - listitem [ref=e232]: "\"Seller brief\" one-pager they can hand clients"
+          - listitem [ref=e233]: Dedicated acquisitions rep named per firm
+        - generic [ref=e234]:
+          - strong [ref=e235]: "FL firms to open with:"
+          - text: Van Horn Law Group (bankruptcy), Brodzki Jacobs & Associates, Sandy T. Fox P.A. (divorce).
+      - generic [ref=e236]:
+        - generic [ref=e237]: Lever 03 · Offline
+        - heading "Direct-mail cadence & list hygiene" [level=3] [ref=e238]
+        - paragraph [ref=e239]: "Direct mail is still the #1 seller-source channel for FL operators — if lists and creative are dialed. Most buyers use the same tired yellow-letter; dial variants and list freshness instead."
+        - list [ref=e240]:
+          - listitem [ref=e241]: "List sourcing: PropStream + ListSource (absentee + high-equity + pre-foreclosure)"
+          - listitem [ref=e242]: "Vendors to test: REIPrintMail (AccuPix), Yellow Letter Shop, Open Letter Marketing"
+          - listitem [ref=e243]: A/B every mailer — creative, handwriting, offer angle
+      - generic [ref=e244]:
+        - generic [ref=e245]: Lever 04 · Digital
+        - heading "Geo long-tail SEO (Meridian Trust)" [level=3] [ref=e246]
+        - paragraph [ref=e247]: Not "sell my house fast" — that costs $65+ per click. City long-tail ("we buy houses in Cape Coral", "sell your house fast Palm Bay") costs a fraction and converts better. Florida Cash Home Buyers runs this playbook; you don't yet.
+        - list [ref=e248]:
+          - listitem [ref=e249]: 15 city-level landing pages on meridiantrust.com (not /blog)
+          - listitem [ref=e250]: AggregateRating schema on every page (unlocks review stars in SERP)
+          - listitem [ref=e251]: Revive the blog — 2 local-market posts/month, internal-linked
+      - generic [ref=e252]:
+        - generic [ref=e253]: Lever 05 · Digital
+        - heading "REIA & wholesaler network presence" [level=3] [ref=e254]
+        - paragraph [ref=e255]: "For the PropertyForce (investor-side) pipeline: show up physically at FL's real-estate investor meetups. Live presence beats 10 posts."
+        - list [ref=e256]:
+          - listitem [ref=e257]: Tampa REIA — 2nd Thursday, Doubletree Westshore
+          - listitem [ref=e258]: BPM REIA — only National REIA-approved S. FL chapter
+          - listitem [ref=e259]: Traction REIA — Orlando
+    - generic [ref=e261]:
+      - heading "Realistic 12-month growth target" [level=4] [ref=e262]
+      - generic [ref=e263]: +35-55% seller leads · -34 hrs/week rep time
+      - paragraph [ref=e264]: "Assuming the 90-day sprint ships. Do-nothing trajectory: flat leads, compounding SERP loss to FCHB, Natterbox-AI seat cost creeping in Y1."
+  - generic [ref=e266]:
+    - generic [ref=e267]: The 90-day sprint
+    - heading "Four phases, measurable targets" [level=2] [ref=e268]
+    - paragraph [ref=e269]: Week-by-week plan — what gets shipped, what gets measured, what the team owns vs. what Georg owns.
+    - generic [ref=e270]:
+      - generic [ref=e271]:
+        - generic [ref=e272]: Weeks 1-2
+        - heading "Foundation & Quick Wins" [level=3] [ref=e273]
+        - list [ref=e274]:
+          - listitem [ref=e275]: Add 6 security headers on WP Engine (both sites)
+          - listitem [ref=e276]: Fix meridiantrust.com robots.txt + sitemap
+          - listitem [ref=e277]: Put Meridian Trust behind Cloudflare free plan
+          - listitem [ref=e278]: Claim + fix BBB PropertyForce (currently miscategorized as San Francisco)
+          - listitem [ref=e279]: Disable XML-RPC on PF to close brute-force vector
+        - generic [ref=e280]:
+          - strong [ref=e281]: "Target:"
+          - text: securityheaders.com grade F → A- on both sites. 0 cost.
+      - generic [ref=e282]:
+        - generic [ref=e283]: Weeks 3-4
+        - heading "Call Intelligence MVP" [level=3] [ref=e284]
+        - list [ref=e285]:
+          - listitem [ref=e286]: Natterbox → S3 recording drop configured
+          - listitem [ref=e287]: Whisper transcription pipeline (Georg)
+          - listitem [ref=e288]: Claude-powered summary + rep scoring rubric
+          - listitem [ref=e289]: Auto-follow-up email draft generator
+          - listitem [ref=e290]: Live demo on 10 historical calls for Jordan + Bryan
+        - generic [ref=e291]:
+          - strong [ref=e292]: "Target:"
+          - text: first 10 auto-scored calls → Salesforce. Decision point on the Natterbox-AI $24K.
+      - generic [ref=e293]:
+        - generic [ref=e294]: Weeks 5-8
+        - heading "Distribution layer" [level=3] [ref=e295]
+        - list [ref=e296]:
+          - listitem [ref=e297]: 5 city landing pages launched (Miami, Ft. Lauderdale, Tampa, Jax, Orlando)
+          - listitem [ref=e298]: AggregateRating schema live site-wide
+          - listitem [ref=e299]: Blog revived — 2 local-market posts shipped
+          - listitem [ref=e300]: First 10 probate/divorce attorney intros scheduled (Miami metro)
+        - generic [ref=e301]:
+          - strong [ref=e302]: "Target:"
+          - text: first Google SERP star-snippets visible. First 2 attorney partners signed.
+      - generic [ref=e303]:
+        - generic [ref=e304]: Weeks 9-12
+        - heading "Scale & measure" [level=3] [ref=e305]
+        - list [ref=e306]:
+          - listitem [ref=e307]: Call-intel pipeline running on all inbound seller calls
+          - listitem [ref=e308]: Salesforce auto-structured data flowing (owner, motivation, ARV notes)
+          - listitem [ref=e309]: Next 5 city pages + 3 REIA meetup appearances
+          - listitem [ref=e310]: Probate pipeline expanded to Tampa + Jax metros
+          - listitem [ref=e311]: Overflow AI voice agent scoped (Phase 2 readiness)
+        - generic [ref=e312]:
+          - strong [ref=e313]: "Target:"
+          - text: +10-15% seller call volume, ~25 hrs/wk recovered, 4+ active attorney partners.
+  - generic [ref=e315]:
+    - generic [ref=e316]: Digital infrastructure
+    - heading "What we checked — what's working, what's broken" [level=2] [ref=e317]
+    - paragraph [ref=e318]: Combined findings across security, SEO, and social. Full detail available on request; headlines here.
+    - generic [ref=e319]:
+      - generic [ref=e320]:
+        - generic [ref=e321]: ✓ Wins
+        - heading "Review & trust fabric" [level=4] [ref=e322]
+        - list [ref=e323]:
+          - listitem [ref=e324]: "MT: BBB A+ accredited 2012, 317 Birdeye reviews at 4.7"
+          - listitem [ref=e325]: "MT: Yoast SEO active, RealEstateAgent + FAQPage JSON-LD"
+          - listitem [ref=e326]: "MT: HTTPS valid, Let's Encrypt auto-renewing"
+          - listitem [ref=e327]: "PF: Glassdoor 4.5/5, Sun-Sentinel Top Workplace"
+      - generic [ref=e328]:
+        - generic [ref=e329]: ▲ Gaps — Security
+        - heading "0/7 security headers on both sites" [level=4] [ref=e330]
+        - list [ref=e331]:
+          - listitem [ref=e332]: "Missing: HSTS, CSP, X-Frame-Options, X-Content-Type, Referrer-Policy, Permissions-Policy"
+          - listitem [ref=e333]:
+            - text: Both leak
+            - code [ref=e334]: "x-powered-by: WP Engine"
+          - listitem [ref=e335]:
+            - text: PF exposes
+            - code [ref=e336]: xmlrpc.php
+            - text: — brute-force vector
+          - listitem [ref=e337]: MT has no CDN — 0.86s TTFB, 2× slower than PF
+      - generic [ref=e338]:
+        - generic [ref=e339]: ▲ Gaps — SEO
+        - heading "Missing schema & dead content" [level=4] [ref=e340]
+        - list [ref=e341]:
+          - listitem [ref=e342]: No AggregateRating schema — no review stars in SERP
+          - listitem [ref=e343]: MT blog dead since Sept 2023
+          - listitem [ref=e344]: No og:image on either site — ugly iMessage/WhatsApp previews
+          - listitem [ref=e345]: PF missing meta description, canonical, and all JSON-LD
+          - listitem [ref=e346]: PF BBB miscategorized under San Francisco, not accredited
+      - generic [ref=e347]:
+        - generic [ref=e348]: ▲ Gaps — Distribution
+        - heading "No city-level pages" [level=4] [ref=e349]
+        - list [ref=e350]:
+          - listitem [ref=e351]: One homepage serving three states — can't rank on "[city] FL" queries
+          - listitem [ref=e352]: No Google Business Profile for PropertyForce
+          - listitem [ref=e353]: Press section stale since Sept 2023
+    - generic [ref=e354]:
+      - heading "⚡ Free quick wins — today" [level=4] [ref=e355]
+      - list [ref=e356]:
+        - listitem [ref=e357]: Add security headers via WP Engine dashboard (10 min) → F to A- grade
+        - listitem [ref=e358]: Submit correct BBB address for PropertyForce to re-categorize to FL
+        - listitem [ref=e359]: Deploy Cloudflare in front of meridiantrust.com (15 min, free tier)
+        - listitem [ref=e360]:
+          - text: Add
+          - code [ref=e361]: og:image
+          - text: meta tags referencing your existing hero images
+        - listitem [ref=e362]:
+          - text: Fix meridiantrust.com robots.txt to reference
+          - code [ref=e363]: /sitemap_index.xml
+  - generic [ref=e365]:
+    - generic [ref=e366]: AI & operations
+    - heading "Hours back per week — not features" [level=2] [ref=e367]
+    - paragraph [ref=e368]: Five AI opportunities framed by the hours they give back to your 4-person core team. These all share one pipeline, so cost compounds — it doesn't stack.
+    - generic [ref=e369]:
+      - generic [ref=e370]:
+        - generic [ref=e371]: ~12 hrs/wk saved
+        - heading "Call transcription & summary" [level=3] [ref=e372]
+        - paragraph [ref=e373]: Whisper transcribes every inbound seller call. Claude summarizes motivation, timeline, property condition, objections. No more listening to 20-min recordings.
+        - generic [ref=e374]:
+          - strong [ref=e375]: "Build cost:"
+          - text: ~$1.8K one-time + $40/mo OpenAI usage
+      - generic [ref=e376]:
+        - generic [ref=e377]: ~8 hrs/wk saved
+        - heading "Rep scoring & coaching" [level=3] [ref=e378]
+        - paragraph [ref=e379]: Same transcripts → graded against a wholesaling-specific rubric (rapport, discovery, offer framing, close). Jordan gets a weekly ranked dashboard instead of 40 hours of audio.
+        - generic [ref=e380]:
+          - strong [ref=e381]: "Build cost:"
+          - text: ~$1.2K one-time (shares pipeline)
+      - generic [ref=e382]:
+        - generic [ref=e383]: ~7 hrs/wk saved
+        - heading "Auto-drafted follow-up" [level=3] [ref=e384]
+        - paragraph [ref=e385]: Post-call, a personalized follow-up email lands in the rep's inbox — queued for 1-tap send. References the seller's actual motivations, not a template.
+        - generic [ref=e386]:
+          - strong [ref=e387]: "Build cost:"
+          - text: ~$0.8K one-time
+      - generic [ref=e388]:
+        - generic [ref=e389]: ~7 hrs/wk saved
+        - heading "Salesforce structured push" [level=3] [ref=e390]
+        - paragraph [ref=e391]: Call data lands structured in SF — motivation, price expectation, ARV cues, next step — without a rep typing it. Removes the "post-call data entry" tax.
+        - generic [ref=e392]:
+          - strong [ref=e393]: "Build cost:"
+          - text: ~$1.4K one-time
+      - generic [ref=e394]:
+        - generic [ref=e395]: Phase 2
+        - heading "Overflow voice agent" [level=3] [ref=e396]
+        - paragraph [ref=e397]: Calls the live team can't catch get answered by an AI agent — full seller intake, property details, reason for selling. Already prototyped as CallFlow AI.
+        - generic [ref=e398]:
+          - strong [ref=e399]: "Build cost:"
+          - text: ~$4K one-time + $90/mo Twilio+LLM
+      - generic [ref=e400]:
+        - generic [ref=e401]: $15K/yr saved
+        - heading "Natterbox-AI alternative math" [level=3] [ref=e402]
+        - paragraph [ref=e403]: "Natterbox AI: $24K-$44K/yr for 25 seats. Custom CallFlow stack: ~$9K all-in Y1, then ~$2.4K/yr. Same outcomes for seller-intake calls; Natterbox has enterprise polish you don't need at 4 seats."
+        - generic [ref=e404]:
+          - strong [ref=e405]: "Y1 delta:"
+          - text: ~$15-35K savings
+    - generic [ref=e406]:
+      - heading "▸ The demo that closes this deal" [level=4] [ref=e407]
+      - heading "60 seconds of real audio → structured Salesforce record" [level=3] [ref=e408]
+      - paragraph [ref=e409]: "Bring a recent real inbound call. Drop it into the pipeline live. In under a minute Jordan watches:"
+      - list [ref=e410]:
+        - listitem [ref=e411]: Full transcript — verbatim
+        - listitem [ref=e412]: 3-bullet summary with motivation + timeline + price expectation
+        - listitem [ref=e413]: Rep scorecard against the wholesaling rubric
+        - listitem [ref=e414]: Drafted seller follow-up email (ready to send)
+        - listitem [ref=e415]: Salesforce opportunity record — populated, not typed
+        - listitem [ref=e416]: "Side-by-side cost: Natterbox $24K vs. this build $9K Y1"
+      - paragraph [ref=e417]: The math does the talking. No pitch deck needed.
+    - generic [ref=e418]:
+      - strong [ref=e419]: "Compliance note:"
+      - text: Florida is a
+      - strong [ref=e420]: two-party consent
+      - text: state for call recording (Fla. Stat. § 934.03). Current Natterbox recording practice is already compliant via disclosure. Any AI processing layer inherits the same consent scope — nothing changes for sellers. For outbound agent calls (Phase 2), the disclosure script is already included in the CallFlow prototype. No SEC, HIPAA, or Reg-BI exposure; standard FDUTPA good-faith applies.
+  - generic [ref=e422]:
+    - generic [ref=e423]: The play
+    - heading "Three phases — scoped by outcome, not hours" [level=2] [ref=e424]
+    - paragraph [ref=e425]: Phase 1 closes the biggest hours-saved opportunity. Phase 2 amplifies distribution. Phase 3 is optional and only makes sense if Phase 1 + 2 land.
+    - generic [ref=e426]:
+      - generic [ref=e427]:
+        - generic [ref=e428]: Phase 1 · Recommended start
+        - heading "Call Intelligence Stack" [level=3] [ref=e429]
+        - list [ref=e430]:
+          - listitem [ref=e431]: Whisper transcription pipeline for all inbound seller calls
+          - listitem [ref=e432]: Claude-powered call summary + rep scorecard
+          - listitem [ref=e433]: Auto-drafted follow-up emails to sellers
+          - listitem [ref=e434]: Salesforce structured data integration
+          - listitem [ref=e435]: Live demo & handoff training for Bryan
+      - generic [ref=e436]:
+        - generic [ref=e437]: Phase 2 · Distribution layer
+        - heading "SEO & city pages" [level=3] [ref=e438]
+        - list [ref=e439]:
+          - listitem [ref=e440]: 15 city landing pages on meridiantrust.com
+          - listitem [ref=e441]: AggregateRating schema site-wide
+          - listitem [ref=e442]: Blog revival — 2 local posts/month
+          - listitem [ref=e443]: og:image + meta fixes on both sites
+          - listitem [ref=e444]: Cloudflare + security headers rollout
+      - generic [ref=e445]:
+        - generic [ref=e446]: Phase 3 · Optional
+        - heading "Overflow voice agent" [level=3] [ref=e447]
+        - list [ref=e448]:
+          - listitem [ref=e449]: AI agent answers calls the live team misses
+          - listitem [ref=e450]: Full seller intake — condition, motivation, price
+          - listitem [ref=e451]: Routes qualified leads to rep inbox
+          - listitem [ref=e452]: FL-compliant disclosure script
+          - listitem [ref=e453]: Retire Natterbox-AI consideration
+    - generic [ref=e454]:
+      - generic [ref=e455]:
+        - heading "Want the 60-second demo?" [level=3] [ref=e456]
+        - paragraph [ref=e457]: Send one recent seller call (any length). I'll run it through the pipeline and share the output Friday. No commitments — just proof.
+      - link "Email Georg →" [ref=e458] [cursor=pointer]:
+        - /url: mailto:georg.chimion@gmail.com?subject=PropertyForce%20v2%20—%20Demo%20Call
+  - contentinfo [ref=e459]:
+    - generic [ref=e460]:
+      - generic [ref=e461]:
+        - generic [ref=e462]: GC
+        - generic [ref=e463]:
+          - heading "Georg Chimion · AI automation specialist" [level=4] [ref=e464]
+          - paragraph [ref=e465]: PwC contractor. Built Ask Penny (Claude-powered finance), CallFlow AI (voice intake), and Agent Factory (autonomous build system). Works with lean operators who want AI to do the tedious work their team already knows how to do — just faster.
+      - generic [ref=e466]:
+        - strong [ref=e467]: Private document.
+        - text: Prepared for Jordan Davis & Robert Seidler. Not for redistribution.
+        - strong [ref=e468]: "Claims & figures:"
+        - text: competitor review counts current as of April 19, 2026 (Google/BBB/Birdeye public profiles). Cost-of-inaction estimates are directional — not independently audited.
+        - strong [ref=e469]: "Compliance:"
+        - text: "this document is not legal, financial, or tax advice. Florida two-party consent, FL Bar referral rules, and FDUTPA considerations noted above are general; confirm specifics with counsel. Competitor analysis based on publicly accessible information; not all competitors are verified as currently operating at the scale published. Links and emails:"
+        - link "georg.chimion@gmail.com" [ref=e470] [cursor=pointer]:
+          - /url: mailto:georg.chimion@gmail.com
+        - text: ·
+        - link "georg.miami" [ref=e471] [cursor=pointer]:
+          - /url: https://georg.miami
+        - text: .

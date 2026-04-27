@@ -1,0 +1,6 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - text: A PORTFOLIO BY
+    - link "GEORG.MIAMI" [ref=e3] [cursor=pointer]:
+      - /url: https://georg.miami
+  - generic: WASD / ARROWS · SPACE ACTION · ENTER START

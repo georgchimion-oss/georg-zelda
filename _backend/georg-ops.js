@@ -473,6 +473,7 @@ function registerAdmin(app, opsAuthToken) {
 // Penny validates on POST /_gate/login, sets a signed cookie, then nginx
 // uses auth_request → /_gate/check to gate all requests to the site.
 const HTPASSWD_MAP = {
+  // Shared-creds audit group (/etc/nginx/.htpasswd-audits, user: georg)
   'rcg.georg.miami': '/etc/nginx/.htpasswd-audits',
   'step2.georg.miami': '/etc/nginx/.htpasswd-audits',
   'dumbo-health.georg.miami': '/etc/nginx/.htpasswd-audits',
@@ -481,9 +482,14 @@ const HTPASSWD_MAP = {
   'rbc-datacenter.georg.miami': '/etc/nginx/.htpasswd-audits',
   'dram-finance.georg.miami': '/etc/nginx/.htpasswd-audits',
   'propertyforce.georg.miami': '/etc/nginx/.htpasswd-audits',
+  'audits.georg.miami': '/etc/nginx/.htpasswd-audits',
+  // Per-client creds
   'coleman.georg.miami': '/etc/nginx/htpasswd-coleman',
   'thesolerevival.georg.miami': '/etc/nginx/htpasswd-thesolerevival',
   'mockup-thesolerevival.georg.miami': '/etc/nginx/htpasswd-mockup-thesolerevival',
+  // Personal (health records)
+  'health.georg.miami': '/etc/nginx/.htpasswd-health',
+  'rheumatology.georg.miami': '/etc/nginx/.htpasswd-health',
 };
 const GATE_COOKIE_MAX_AGE = 30 * 24 * 3600; // 30 days
 

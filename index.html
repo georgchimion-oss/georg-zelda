@@ -113,7 +113,6 @@
   // ───────── Assets ─────────
   const ASSETS = {
     map:      'Overworld - Light World.png',
-    interior: 'House Interiors - House of Storytelling Tree _ Sahasralah.png',
   };
   const IMG = {};
 
@@ -159,79 +158,79 @@
     piscine:  { name: 'La Piscine',    tag: 'RESTAURANT CONCEPT',  desc: ['Miami restaurant concept —','explosive landing-page','experiments.'], url: 'https://la-piscine.georg.miami' },
   };
   const AUDITS = [
-    { name: 'Buildrite',        tag: 'CONSTRUCTION',    url: 'https://buildrite.georg.miami',      desc: 'Growth audit + branded site for a construction firm.' },
-    { name: 'Dumbo Health',     tag: 'SLEEP APNEA',     url: 'https://dumbo-health.georg.miami',   desc: 'Sleep-apnea telehealth audit for Nicolas Nemeth.' },
-    { name: 'Dram Finance',     tag: 'WHISKY INVESTING',url: 'https://dram-finance.georg.miami',   desc: 'Fractional whisky investing audit for Mario Tricarico.' },
-    { name: 'Publisher Intel',  tag: 'FINPUB',          url: 'https://ian.georg.miami',            desc: 'Financial-publishing audit + Ian King prototype.' },
-    { name: 'DC Command',       tag: 'RBC DATACENTER',  url: 'https://rbc-datacenter.georg.miami', desc: 'RBC data-center command-center POC for Sami Fleyhan.' },
+    { name: 'PropertyForce',   short: 'PROPFORCE', tag: 'REAL ESTATE',     url: 'https://propertyforce-v2.georg.miami', desc: 'Growth audit for Jordan & Robert at Meridian Trust.' },
+    { name: 'Buildrite',       short: 'BUILDRITE', tag: 'CONSTRUCTION',    url: 'https://buildrite.georg.miami',      desc: 'Growth audit + branded site for Bryan\'s construction firm.' },
+    { name: 'Dumbo Health',    short: 'DUMBO',     tag: 'SLEEP APNEA',     url: 'https://dumbo-health-v2.georg.miami',desc: 'Sleep-apnea telehealth audit for Nicolas Nemeth.' },
+    { name: 'Dram Finance',    short: 'DRAM',      tag: 'WHISKY INVESTING',url: 'https://dram-finance.georg.miami',   desc: 'Fractional whisky investing audit for Mario Tricarico.' },
+    { name: 'Publisher Intel', short: 'PUBINTEL',  tag: 'FINPUB',          url: 'https://ian.georg.miami',            desc: 'Financial-publishing audit for Ian King.' },
+    { name: 'DC Command',      short: 'DC-CMD',    tag: 'RBC DATACENTER',  url: 'https://rbc-datacenter.georg.miami', desc: 'Data-center command-center POC for Sami Fleyhan.' },
+    { name: 'La Piscine',      short: 'PISCINE',   tag: 'RESTAURANT',      url: 'https://la-piscine.georg.miami',     desc: 'Miami restaurant concept — explosive landing-page experiments.' },
   ];
 
   // ───────── Map: interactive nodes on the Light World ─────────
   // Coordinates are pixel positions on the 4110×5136 Light World PNG.
   // Landmarks:  Kakariko village ~ (300-1100, 2300-3200), Hyrule Castle center ~ (2100, 2500),
   //             Lake Hylia ~ (2000, 4400), open grass south of castle ~ (2100, 3300).
+  // Hyrule Castle gardens — a naturally bounded area with:
+  //   - NORTH gate (castle entrance) → audit list interior
+  //   - 6 PRODUCT triforce glows in the flower gardens
+  //   - Enclosed by castle walls; no dead corridors to get lost in
   const NODES = [
-    // Village of Builders — Kakariko houses (6 flagship products)
-    { kind: 'project', key: 'vestia',   x: 2260, y: 2290 },
-    { kind: 'project', key: 'caliber',  x: 2350, y: 2290 },
-    { kind: 'project', key: 'penny',    x: 2440, y: 2290 },
-    { kind: 'project', key: 'callflow', x: 2260, y: 2360 },
-    { kind: 'project', key: 'onboard',  x: 2350, y: 2360 },
-    { kind: 'project', key: 'factory',  x: 2440, y: 2360 },
+    // 6 product triforces spread across the two garden halves.
+    { kind: 'project', key: 'vestia',   x: 1925, y: 2940 },
+    { kind: 'project', key: 'caliber',  x: 1985, y: 3060 },
+    { kind: 'project', key: 'penny',    x: 1925, y: 3140 },
+    { kind: 'project', key: 'callflow', x: 2275, y: 2940 },
+    { kind: 'project', key: 'onboard',  x: 2215, y: 3060 },
+    { kind: 'project', key: 'factory',  x: 2275, y: 3140 },
 
-    // Audit Castle — Hyrule Castle gate (south entrance)
-    { kind: 'castle', x: 2100, y: 2820 },
+    // Audit Castle — positioned at the visible castle south gate.
+    { kind: 'castle', x: 2105, y: 2870 },
 
-    // La Piscine — Lake Hylia shore
-    { kind: 'project', key: 'piscine',  x: 2400, y: 4280 },
-
-    // World NPC / sign — open field east of Kakariko village (spawn area)
-    { kind: 'wizard', x: 2550, y: 2220 },
-    { kind: 'sign',   x: 2500, y: 2220, lines: [
-      'WELCOME — KAKARIKO',
-      'SIX HOUSES — ONE PER BUILD',
-      'South: Castle of Audits',
-      'Far South: Lake La Piscine',
+    // Spawn sign — sits south of Link, doesn't block the path up.
+    { kind: 'sign', x: 2060, y: 3120, lines: [
+      'HYRULE CASTLE GARDENS',
+      '↑ North: Castle of Audits',
+      '← →  Gardens: 6 Products',
       'Press A near any glow.',
     ]},
-
-    // Directional signs along paths
-    { kind: 'sign', x: 2620, y: 2560, lines: [
-      '↓  TO THE CASTLE  ↓',
-      'FIVE CLIENT AUDITS',
-      'Walk south through the field.',
-    ]},
-    { kind: 'sign', x: 2620, y: 3300, lines: [
-      '↓  LAKE HYLIA  ↓',
-      'LA PISCINE restaurant concept',
-      'Keep walking south.',
-    ]},
-    { kind: 'sign', x: 2200, y: 2240, lines: [
-      '← THE VILLAGE',
-      'Six product houses.',
-      'Glowing Triforces mark doors.',
-    ]},
+    // Wizard stands right next to Link at spawn — unmissable and within
+    // the 24px interact radius so pressing A at spawn triggers his dialog.
+    { kind: 'wizard', x: 2125, y: 3080 },
   ];
 
-  // World labels — always visible floating text (guides new players).
-  // Kept distinct from node banners to avoid label collisions.
+  // World labels — always-visible floating text (guides new players).
+  // Placed so they're VISIBLE in the spawn viewport (camera ~y=3040-3280 at spawn).
+  // One arrow sign at the top of the spawn viewport — points the player toward
+  // the castle. Products identify themselves via their own glowing triforces
+  // and auto-banners, so no extra signs needed for the gardens.
   const LABELS = [
-    { x: 2350, y: 2180, text: '← VILLAGE OF BUILDERS',   color: '#ffd850' },
-    { x: 2620, y: 2180, text: 'YOU ARE HERE',            color: '#98ff98' },
-    { x: 2620, y: 2450, text: '↓ TO THE CASTLE',         color: '#ff90b0' },
-    { x: 2620, y: 3450, text: '↓ TO LAKE LA PISCINE',    color: '#98d8ff' },
-    { x: 2700, y: 3900, text: 'LAKE HYLIA',              color: '#98d8ff' },
+    // Just above spawn, pointing up toward the castle. Positioned so the
+    // banner slides off the TOP of the viewport once Link walks north far
+    // enough that the castle banner takes over — no HUD overlap.
+    { x: 2105, y: 3035, text: '↑  AUDITS  ↑',   color: '#ff90b0' },
   ];
 
-  // Hero
+  // Hero — spawns in the gardens, facing north toward castle.
   const hero = {
-    x: 2620, y: 2220,
-    dir: 2, // face west toward village
+    x: 2105, y: 3080,
+    dir: 0, // face north
     frame: 0, ftime: 0,
     moving: false,
   };
+  // Expose for e2e tests (no-op in production use)
+  if (typeof window !== 'undefined') window.__hero = hero;
 
   const MAP_W = 4110, MAP_H = 5136;
+
+  // Bounded playable zone — the gardens just SOUTH of Hyrule Castle.
+  // y1=2880 stops Link a hair south of the castle node (y=2870) so he stands
+  // IN FRONT of the gate. y2=3170 stops him before the paved moat plaza.
+  const WORLD_BOUNDS = { x1: 1880, y1: 2880, x2: 2350, y2: 3170 };
+  // Visible zone for fog — wider than walkable so the castle art (which extends
+  // UP from y=2870 to roughly y=2680) and the surrounding gardens show instead
+  // of being blacked out. Fog only covers pixels beyond this box.
+  const VISIBLE_BOUNDS = { x1: 1820, y1: 2680, x2: 2410, y2: 3200 };
 
   // ───────── Tile-level walkability grid ─────────
   // Pre-computed at load: samples multiple pixels per 8px tile and stores
@@ -290,6 +289,9 @@
 
   function walkableAt(x, y) {
     if (x < 4 || y < 4 || x > MAP_W - 4 || y > MAP_H - 4) return false;
+    // Hard bounds — "the world ends here"
+    if (x < WORLD_BOUNDS.x1 || x > WORLD_BOUNDS.x2 ||
+        y < WORLD_BOUNDS.y1 || y > WORLD_BOUNDS.y2) return false;
     const gx = (x / TILE) | 0, gy = (y / TILE) | 0;
     return walkGrid[gy * GRID_W + gx] === 1;
   }
@@ -858,8 +860,8 @@
         'Welcome, traveler.',
         'Georg is the architect here.',
         'Six houses — each a build.',
-        'Castle — five client audits.',
-        'Go east for the Great Water.',
+        'Castle — seven client works.',
+        'Walk into any glowing triforce.',
       ], null);
     } else if (nearest.kind === 'sign') {
       openDialog(nearest.lines, null);
@@ -880,8 +882,9 @@
   function exitInterior() {
     interior = null;
     state = STATE.OVERWORLD;
-    // return to spawn area near wizard
-    hero.x = 2620; hero.y = 2220; hero.dir = 2;
+    // Return to garden spawn (same as startGame). Old value (2620,2220) was
+    // outside WORLD_BOUNDS and trapped Link off-map.
+    hero.x = 2105; hero.y = 3080; hero.dir = 0;
     fadeT = 0; fadingIn = true;
   }
 
@@ -956,14 +959,28 @@
 
   // ───────── Overworld render ─────────
   function drawOverworld(g, t) {
-    // Camera follows hero, clamped to map bounds
-    const cx = Math.max(GW/2, Math.min(MAP_W - GW/2, hero.x));
-    const cy = Math.max(GH/2, Math.min(MAP_H - GH/2, hero.y));
-    const camX = Math.round(cx - GW/2);
-    const camY = Math.round(cy - GH/2);
+    // Camera follows hero WITHOUT clamping to bounds — lets fog fill the
+    // off-bound strip so Link stays centered near edges. Full-map clamp is
+    // still applied so we don't read pixels off the image.
+    const b = WORLD_BOUNDS;
+    const halfW = GW/2, halfH = GH/2;
+    const cx = Math.max(halfW, Math.min(MAP_W - halfW, hero.x));
+    const cy = Math.max(halfH, Math.min(MAP_H - halfH, hero.y));
+    const camX = Math.round(cx - halfW);
+    const camY = Math.round(cy - halfH);
 
     // Draw map slice
     g.drawImage(IMG.map, camX, camY, GW, GH, 0, 0, GW, GH);
+
+    // Fog for everything outside VISIBLE bounds (NOT walkable bounds) — so the
+    // castle art above the gate still shows while the off-map strips on the
+    // edges read as "end of the world". Uses VISIBLE_BOUNDS, not WORLD_BOUNDS.
+    const v = VISIBLE_BOUNDS;
+    g.fillStyle = 'rgba(8,12,20,0.92)';
+    if (camX < v.x1)         g.fillRect(0, 0, v.x1 - camX, GH);
+    if (camX + GW > v.x2)    g.fillRect(v.x2 - camX, 0, camX + GW - v.x2, GH);
+    if (camY < v.y1)         g.fillRect(0, 0, GW, v.y1 - camY);
+    if (camY + GH > v.y2)    g.fillRect(0, v.y2 - camY, GW, camY + GH - v.y2);
 
     // World labels — always-visible destination tags
     for (const lbl of LABELS) {
@@ -1020,55 +1037,70 @@
   }
 
   function drawWorldLabel(g, cx, cy, text, color, t) {
-    // Floating pill with drop-shadow, gentle bob
+    // Chunky billboard — bigger type, full-opacity plate, bold white-on-color for max contrast.
     const bob = Math.sin(t * 0.002 + cx * 0.01) * 1.2;
     g.save();
-    g.font = 'bold 10px "Courier New", monospace';
+    g.font = 'bold 14px "Courier New", monospace';
     g.textAlign = 'center'; g.textBaseline = 'middle';
-    const w = g.measureText(text).width + 14;
+    const w = g.measureText(text).width + 18;
+    const h = 20;
     const x = Math.round(cx - w / 2);
-    const y = Math.round(cy + bob - 7);
-    // shadow plate
-    g.fillStyle = 'rgba(0,0,0,0.55)';
-    g.fillRect(x + 1, y + 1, w, 14);
-    // body
-    g.fillStyle = 'rgba(18,10,34,0.92)';
-    g.fillRect(x, y, w, 14);
-    // accent line
+    const y = Math.round(cy + bob - h / 2);
+    // drop shadow
+    g.fillStyle = 'rgba(0,0,0,0.7)';
+    g.fillRect(x + 2, y + 2, w, h);
+    // solid dark body
+    g.fillStyle = '#0d0818';
+    g.fillRect(x, y, w, h);
+    // colored outline ring (pixel-perfect double border)
     g.fillStyle = color;
-    g.fillRect(x, y + 12, w, 2);
-    // text
+    g.fillRect(x, y, w, 2);               // top stripe
+    g.fillRect(x, y + h - 2, w, 2);       // bottom stripe
+    g.fillRect(x, y, 2, h);               // left stripe
+    g.fillRect(x + w - 2, y, 2, h);       // right stripe
+    // high-contrast text: white with colored stroke shadow
     g.fillStyle = color;
-    g.fillText(text, Math.round(cx), Math.round(y + 6));
+    g.fillText(text, Math.round(cx + 1), Math.round(y + h / 2 + 1));
+    g.fillStyle = '#ffffff';
+    g.fillText(text, Math.round(cx), Math.round(y + h / 2));
     g.restore();
   }
 
   function drawLabelBanner(g, cx, cy, text, color) {
     g.save();
+    // 8px text keeps the nameplates narrow and unobtrusive — they sit above
+    // each node and shouldn't compete with the map art.
     g.font = 'bold 8px "Courier New", monospace';
     g.textAlign = 'center'; g.textBaseline = 'middle';
-    const w = g.measureText(text).width + 8;
-    const x = Math.round(cx - w / 2), y = Math.round(cy - 5);
-    // background plate
-    g.fillStyle = 'rgba(20,10,40,0.82)';
-    g.fillRect(x, y, w, 10);
-    g.strokeStyle = color;
-    g.lineWidth = 1;
-    g.strokeRect(x + 0.5, y + 0.5, w - 1, 9);
+    const w = g.measureText(text).width + 6;
+    const h = 10;
+    const x = Math.round(cx - w / 2), y = Math.round(cy - h / 2);
+    g.fillStyle = 'rgba(0,0,0,0.65)';
+    g.fillRect(x + 1, y + 1, w, h);
+    g.fillStyle = '#0d0818';
+    g.fillRect(x, y, w, h);
     g.fillStyle = color;
+    g.fillRect(x, y, w, 1);
+    g.fillRect(x, y + h - 1, w, 1);
+    g.fillRect(x, y, 1, h);
+    g.fillRect(x + w - 1, y, 1, h);
+    g.fillStyle = '#ffffff';
     g.fillText(text, Math.round(cx), Math.round(cy));
     g.restore();
   }
 
   function drawHUD(g) {
-    // top title strip
+    // Tiny badge tucked in the bottom-left corner so it never fights a
+    // world label or the action prompt.
     g.save();
-    const grad = g.createLinearGradient(0, 0, 0, 18);
-    grad.addColorStop(0, 'rgba(0,0,0,0.7)');
-    grad.addColorStop(1, 'rgba(0,0,0,0)');
-    g.fillStyle = grad;
-    g.fillRect(0, 0, GW, 18);
-    drawText(g, 'KINGDOM  OF  GEORG', GW/2, 4, 10, '#ffd850', 'center');
+    g.font = 'bold 8px "Courier New", monospace';
+    g.textBaseline = 'top';
+    const lbl = 'KINGDOM OF GEORG';
+    const w = g.measureText(lbl).width + 8;
+    g.fillStyle = 'rgba(0,0,0,0.55)';
+    g.fillRect(0, GH - 12, w, 12);
+    g.fillStyle = '#ffd850';
+    g.fillText(lbl, 4, GH - 10);
     g.restore();
   }
 
@@ -1087,18 +1119,25 @@
     }
     if (!label) return;
     g.save();
-    g.font = 'bold 8px "Courier New", monospace';
+    g.font = 'bold 12px "Courier New", monospace';
     g.textAlign = 'center';
-    const w = g.measureText(label).width + 18;
+    const text = '▸ ' + label + '  [A]';
+    const w = g.measureText(text).width + 16;
+    const h = 18;
     const x = GW/2 - w/2;
-    const y = GH - 22;
-    g.fillStyle = 'rgba(0,0,0,0.8)';
-    g.fillRect(x, y, w, 14);
-    g.strokeStyle = '#ffd850'; g.lineWidth = 1;
-    g.strokeRect(x + 0.5, y + 0.5, w - 1, 13);
+    const y = GH - 26;
+    g.fillStyle = 'rgba(0,0,0,0.85)';
+    g.fillRect(x + 1, y + 1, w, h);
+    g.fillStyle = '#0d0818';
+    g.fillRect(x, y, w, h);
+    g.fillStyle = '#ffd850';
+    g.fillRect(x, y, w, 2);
+    g.fillRect(x, y + h - 2, w, 2);
+    g.fillRect(x, y, 2, h);
+    g.fillRect(x + w - 2, y, 2, h);
     g.fillStyle = '#ffd850';
     g.textBaseline = 'middle';
-    g.fillText('▸ ' + label, GW/2, y + 7);
+    g.fillText(text, GW/2, y + h / 2);
     g.restore();
   }
 
@@ -1295,14 +1334,16 @@
   }
 
   // ───────── Castle interior (audits) ─────────
-  // 5 portraits lining the walls. Each marked as audit[i].
+  // 7 portraits lining the walls (3 top, 2 per side). Each marked as audit[i].
   // Portrait positions in castle room coordinate space (canvas px).
   const CASTLE_PORTRAITS = [
-    { x:  55, y:  72 },
-    { x: 110, y:  55 },
-    { x: 165, y:  48 },
-    { x: 220, y:  55 },
-    { x: 275, y:  72 },
+    { x:  80, y:  50 },  // top-left
+    { x: 160, y:  42 },  // top-center
+    { x: 240, y:  50 },  // top-right
+    { x:  38, y: 110 },  // mid-left
+    { x: 282, y: 110 },  // mid-right
+    { x:  38, y: 170 },  // low-left
+    { x: 282, y: 170 },  // low-right
   ];
 
   function auditStandingNear() {
@@ -1338,7 +1379,7 @@
     for (let i = 0; i < CASTLE_PORTRAITS.length; i++) {
       const p = CASTLE_PORTRAITS[i];
       const a = AUDITS[i];
-      drawPortrait(g, p.x, p.y, a.name, a.tag, pulseNear === i, t);
+      drawPortrait(g, p.x, p.y, a.short || a.name, a.tag, pulseNear === i, t);
     }
 
     // Hero
@@ -1356,7 +1397,7 @@
     g.save();
     g.fillStyle = 'rgba(0,0,0,0.65)';
     g.fillRect(0, 0, GW, 14);
-    drawText(g, 'CASTLE OF AUDITS — FIVE CLIENT WORKS', GW/2, 3, 9, '#ff90b0', 'center');
+    drawText(g, 'CASTLE OF AUDITS — CLIENT WORKS', GW/2, 3, 9, '#ff90b0', 'center');
     g.restore();
 
     drawFade(g);
@@ -1382,12 +1423,21 @@
     g.arc(cx, y + 14, 7, 0, Math.PI*2);
     g.fill();
     g.fillRect(cx - 9, y + 20, 18, 16);
-    // nameplate
-    g.fillStyle = '#3a2410';
-    g.fillRect(x - 4, y + h + 3, w + 8, 10);
-    g.fillStyle = '#b88650';
-    g.fillRect(x - 3, y + h + 4, w + 6, 8);
-    drawText(g, name.toUpperCase(), cx, y + h + 5, 6, '#2a1408', 'center');
+    // Nameplate — dark plate with bright white text. 10px bold reads clearly
+    // even at retina scale. Plate 72px wide fits the longest name (BUILDRITE)
+    // without colliding with adjacent top-row portraits at x=80/160/240.
+    const plateW = 72, plateH = 15;
+    const plateX = cx - plateW / 2, plateY = y + h + 3;
+    g.fillStyle = 'rgba(0,0,0,0.7)';
+    g.fillRect(plateX + 1, plateY + 1, plateW, plateH);
+    g.fillStyle = '#0d0818';
+    g.fillRect(plateX, plateY, plateW, plateH);
+    g.fillStyle = '#ffd850';
+    g.fillRect(plateX, plateY, plateW, 1);
+    g.fillRect(plateX, plateY + plateH - 1, plateW, 1);
+    g.fillRect(plateX, plateY, 1, plateH);
+    g.fillRect(plateX + plateW - 1, plateY, 1, plateH);
+    drawText(g, name.toUpperCase(), cx, plateY + 3, 10, '#ffffff', 'center');
 
     // highlight glow
     if (highlighted) {
@@ -1495,13 +1545,8 @@
   // ───────── Boot ─────────
   async function boot() {
     try {
-      const [mapImg, interiorImgRaw] = await Promise.all([
-        loadImage(ASSETS.map),
-        loadImage(ASSETS.interior),
-      ]);
+      const mapImg = await loadImage(ASSETS.map);
       IMG.map = mapImg;
-      // House interior PNG uses magenta transparency (#FF00FF) and black borders
-      IMG.interior = makeTransparent(interiorImgRaw, [[255, 0, 255]]);
 
       // Pre-compute walkability grid from map pixels
       const mc = document.createElement('canvas');
